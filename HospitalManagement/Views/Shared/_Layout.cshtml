@@ -65,6 +65,19 @@
         .amount {
             border: .1rem solid #dbdbdb;
             padding: .3rem 1rem;
+            border-radius: .3rem;
+        }
+
+        .checkbox__re-examination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: .3rem 1rem;
+            border: .1rem solid #dbdbdb;
+        }
+
+        .checkbox__re-examination input:hover{
+           cursor: pointer
         }
 
     </style>
@@ -145,6 +158,11 @@
                             <input readonly class="form-control" name="StartTime" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" data-original-title="" title="">
                         </div>
 
+                        <div class="form-group checkbox__re-examination">
+                            <label class="col-form-label">Tái khám: </label>
+                            <input type="checkbox" name="name" value=""  style="width: 1rem; height: 1rem"/>
+                        </div>
+
                         <div class="form-group amount">
                             <label class="col-form-label">Số hiện tại</label>
                             <label class="col-form-label">0</label>
@@ -160,14 +178,6 @@
                             </select>
                         </div>
 
-
-                        @*<div class="form-group">
-                            <label class="control-label">Phòng khám</label>
-                            <div class="input-group mar-btm">
-                                @Html.DropDownList("RoomId", (SelectList)ViewBag.GlobalRooms,
-                                    new { @class = "form-control", @required = "required" })
-                            </div>
-                        </div>*@
                     </form>
                 </div>
                 <div class="modal-footer">
