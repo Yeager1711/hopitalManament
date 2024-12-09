@@ -1,0 +1,182 @@
+﻿<footer class="footer">
+
+    <div class="footer-top">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="footer-widget footer-about">
+                        <style>
+                            .footer-logo {
+                                text-align: center; /* Căn giữa logo */
+                                margin: 20px 0; /* Khoảng cách trên và dưới */
+                                overflow: hidden; /* Ẩn phần logo tràn ra ngoài */
+                            }
+
+                                .footer-logo img {
+                                    width: 150px; /* Chiều rộng logo */
+                                    height: auto; /* Chiều cao tự động để giữ tỉ lệ */
+                                    border-radius: 10px; /* Bo góc logo */
+                                    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng chuyển động */
+                                }
+
+                                .footer-logo:hover img {
+                                    transform: translateY(-5px) scale(1.1); /* Di chuyển lên và phóng to khi hover */
+                                    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Tăng bóng đổ khi hover */
+                                }
+                        </style>
+
+                        <div class="footer-logo">
+                            <img src="~/Content/theme/img/logo.png" alt="logo">
+                        </div>
+
+                        <div class="footer-about-content">
+                            <p>Điều quan trọng là phải theo dõi và chăm sóc bệnh nhân một cách tận tình và hiệu quả. </p>
+                            <!----->
+
+                            <style>
+                                .social-icon {
+                                    text-align: center; /* Căn giữa các biểu tượng */
+                                }
+
+                                    .social-icon ul {
+                                        list-style: none; /* Bỏ dấu đầu dòng */
+                                        padding: 0;
+                                    }
+
+                                    .social-icon li {
+                                        display: inline-block; /* Hiển thị các biểu tượng ngang hàng */
+                                        margin: 0 15px; /* Khoảng cách giữa các biểu tượng */
+                                        transition: transform 0.3s; /* Hiệu ứng chuyển động khi hover */
+                                    }
+
+                                        .social-icon li a {
+                                            text-decoration: none; /* Bỏ gạch chân */
+                                            color: #555; /* Màu sắc biểu tượng */
+                                            font-size: 24px; /* Kích thước biểu tượng */
+                                            position: relative; /* Để có thể sử dụng hiệu ứng */
+                                        }
+
+                                            .social-icon li a:hover {
+                                                color: #007bff; /* Thay đổi màu khi hover */
+                                                transform: translateY(-5px); /* Đẩy lên khi hover */
+                                            }
+
+                                .social-text {
+                                    display: block; /* Hiển thị tên bên dưới biểu tượng */
+                                    font-size: 12px; /* Kích thước chữ */
+                                    margin-top: 5px; /* Khoảng cách giữa biểu tượng và tên */
+                                    color: #777; /* Màu sắc tên */
+                                    opacity: 0; /* Ban đầu ẩn */
+                                    transition: opacity 0.3s; /* Hiệu ứng chuyển đổi */
+                                }
+
+                                .social-icon li a:hover .social-text {
+                                    opacity: 1; /* Hiện tên khi hover */
+                                }
+                            </style>
+
+                            <div class="social-icon">
+                                <ul>
+                                    <li>
+                                        <a href="#" target="_blank" title="Chia sẻ trên Facebook">
+                                            <i class="fab fa-facebook-f"></i>
+                                            <span class="social-text">Facebook</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="_blank" title="Chia sẻ trên Twitter">
+                                            <i class="fab fa-twitter"></i>
+                                            <span class="social-text">Twitter</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="_blank" title="Kết nối trên LinkedIn">
+                                            <i class="fab fa-linkedin-in"></i>
+                                            <span class="social-text">LinkedIn</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" target="_blank" title="Theo dõi trên Instagram">
+                                            <i class="fab fa-instagram"></i>
+                                            <span class="social-text">Instagram</span>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </div>
+
+
+                            <!----->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="footer-widget footer-menu">
+                        <h2 class="footer-title">DANH MỤC</h2>
+                        <ul>
+                            <li><a href="/home/about">Giới thiệu</a></li>
+                            <li><a href="/doctor/Search">Tìm kiếm bác sĩ</a></li>
+                            <li><a href="/article/index">Danh mục blog</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="footer-widget footer-menu">
+                        <h2 class="footer-title">VỀ CHÚNG TÔI</h2>
+                        <ul>
+                            <li><a href="/home/contact">Hỗ trợ</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+
+                    <div class="footer-widget footer-contact">
+                        <h2 class="footer-title">LIÊN HỆ VỚI CHÚNG TÔI</h2>
+                        <div class="footer-contact-info">
+                            <div class="footer-address">
+                                <span><i class="fas fa-map-marker-alt"></i></span>
+                                <p> Đường Trần Văn Mười, huyện Hóc Môn<br> TPHCM </p>
+                            </div>
+                            <p>
+                                <i class="fas fa-phone-alt"></i>
+                                <a href="tel:+84354477027">+84 35 4477 027</a>
+                            </p>
+                            <p class="mb-0">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:truongthithuylinh2468@gmail.com">truongthithuylinh2468@gmail.com</a>
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        <div class="container-fluid">
+
+            <div class="copyright">
+                <div class="row">
+                    <div class="col-md-6 col-lg-6">
+                        <div class="copyright-text">
+                            <p class="mb-0">&copy; @DateTime.Now.Year Mọi quyền được bảo lưu.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-6">
+
+                        <div class="copyright-menu">
+                            <ul class="policy-menu">
+                                <li><a href="#">Điều khoản và Điều kiện</a></li>
+                                <li><a href="#">Chính sách</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

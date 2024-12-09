@@ -1,0 +1,979 @@
+﻿@{
+    ViewBag.Title = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model BELibrary.Entity.Doctor
+
+<div class="breadcrumb-bar">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-12 col-12">
+                <nav aria-label="breadcrumb" class="page-breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Hồ sơ bác sĩ</li>
+                    </ol>
+                </nav>
+                <h2 class="breadcrumb-title">Hồ sơ bác sĩ</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content">
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <div class="doctor-widget">
+                    <div class="doc-info-left">
+                        <div class="doctor-img">
+                            <img src="@Model.Avatar" class="img-fluid" alt="User Image">
+                        </div>
+                        <div class="doc-info-cont">
+                            <h4 class="doc-name">@Model.Name</h4>
+                            <p class="doc-speciality">@Model.Descriptions</p>
+                            <p class="doc-department"> @Model.Faculty.Name</p>
+                            <div class="rating">
+                                <i class="fas fa-star filled"></i>
+                                <i class="fas fa-star filled"></i>
+                                <i class="fas fa-star filled"></i>
+                                <i class="fas fa-star filled"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="d-inline-block average-rating">(35)</span>
+                            </div>
+                            <div class="clinic-details">
+                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i> @Model.Address</p>
+                                <ul class="clinic-gallery">
+                                    <li>
+                                        <a href="~/Content/theme/img/features/feature-01.jpg" data-fancybox="gallery">
+                                            <img src="~/Content/theme/img/features/feature-01.jpg" alt="Feature">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Content/theme/img/features/feature-02.jpg" data-fancybox="gallery">
+                                            <img src="~/Content/theme/img/features/feature-02.jpg" alt="Feature Image">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Content/theme/img/features/feature-03.jpg" data-fancybox="gallery">
+                                            <img src="~/Content/theme/img/features/feature-03.jpg" alt="Feature">
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="~/Content/theme/img/features/feature-04.jpg" data-fancybox="gallery">
+                                            <img src="~/Content/theme/img/features/feature-04.jpg" alt="Feature">
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="clinic-services">
+                                <span>Điều trị</span>
+                                <span>Chuẩn đoán</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="doc-info-right">
+                        <div class="clini-infos">
+                            <ul>
+                                <li><i class="far fa-thumbs-up"></i> 99%</li>
+                                <li><i class="far fa-comment"></i> 35 phản hồi</li>
+                                <li><i class="fas fa-map-marker-alt"></i> @Model.Address</li>
+                                <li><i class="far fa-money-bill-alt"></i> @Model.Phone</li>
+                            </ul>
+                        </div>
+                        <div class="doctor-action">
+                            <a href="javascript:void(0)" class="btn btn-white fav-btn" data-toggle="tooltip" data-placement="top" title="Lưu vào mục yêu thích">
+                                <i class="far fa-bookmark"></i>
+                            </a>
+                            <a href="chat.html" class="btn btn-white msg-btn" data-toggle="tooltip" data-placement="top" title="Nhắn tin với bác sĩ">
+                                <i class="far fa-comment-alt"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-white call-btn" data-toggle="modal" data-target="#voice_call" data-toggle="tooltip" data-placement="top" title="Gọi thoại">
+                                <i class="fas fa-phone"></i>
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-white call-btn" data-toggle="modal" data-target="#video_call" data-toggle="tooltip" data-placement="top" title="Gọi video">
+                                <i class="fas fa-video"></i>
+                            </a>
+                        </div>
+                        <script>
+                            // Hàm để lưu vào mục yêu thích
+                            function toggleFavorite() {
+                                const favBtn = document.querySelector('.fav-btn');
+                                favBtn.classList.toggle('active');
+
+                                // Lưu trạng thái yêu thích vào localStorage
+                                const isFavorite = favBtn.classList.contains('active');
+                                localStorage.setItem('isFavorite', isFavorite);
+
+                                const message = isFavorite ? 'Đã lưu vào mục yêu thích!' : 'Đã xóa khỏi mục yêu thích!';
+                                alert(message);
+                            }
+
+                            // Khi tải trang, kiểm tra trạng thái yêu thích
+                            document.addEventListener('DOMContentLoaded', () => {
+                                const isFavorite = localStorage.getItem('isFavorite') === 'true';
+                                const favBtn = document.querySelector('.fav-btn');
+                                if (isFavorite) {
+                                    favBtn.classList.add('active'); // Thêm class active nếu đã được yêu thích
+                                }
+                            });
+
+                            // Hàm gọi thoại
+                            function makeVoiceCall() {
+                                const phoneNumber = "0354477027"; // Số điện thoại
+                                window.location.href = `tel:${phoneNumber}`; // Mở ứng dụng gọi điện
+                            }
+
+                            // Hàm gọi video
+                            function makeVideoCall() {
+                                const videoCallPage = "video_call.html"; // Đường dẫn đến trang gọi video
+                                const phoneNumber = "03534477027"; // Số điện thoại
+                                window.location.href = `${videoCallPage}?number=${phoneNumber}`; // Chuyển đến trang gọi video
+                            }
+
+                        </script>
+                        <!-- CSS -->
+                        <style>
+                            .doctor-action a {
+                                transition: all 0.3s ease;
+                                border-radius: 50px;
+                                margin: 0 5px;
+                                padding: 5px 10px; /* Giảm kích thước padding cho nút nhỏ hơn */
+                                font-size: 12px; /* Giảm kích thước chữ */
+                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                            }
+
+                                .doctor-action a:hover {
+                                    background-color: #f0f0f0;
+                                    transform: translateY(-3px);
+                                    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+                                }
+
+                            .doctor-action i {
+                                font-size: 16px; /* Giảm kích thước icon */
+                            }
+                        </style>
+
+                        <!-- JavaScript (Bootstrap tooltips) -->
+                        <script>
+                            $(document).ready(function () {
+                                $('[data-toggle="tooltip"]').tooltip();
+                            });
+                        </script>
+
+                        <div class="clinic-booking">
+                            <a class="apt-btn" href="javascript:void(0)" onclick="bookNow('@Model.Id')">Đặt lịch hẹn</a>
+                        </div>
+
+                        <!-- CSS -->
+                        <style>
+                            .clinic-booking {
+                                text-align: center; /* Canh giữa nút trong container */
+                                margin-top: 20px;
+                            }
+
+                            .apt-btn {
+                                background-color: #00008b; /* Màu nền xanh lá */
+                                color: white; /* Màu chữ trắng */
+                                padding: 10px 20px; /* Khoảng cách nội dung */
+                                border-radius: 5px; /* Bo tròn góc nút */
+                                font-size: 16px; /* Kích thước chữ */
+                                text-decoration: none; /* Loại bỏ gạch chân */
+                                transition: background-color 0.3s ease, transform 0.3s ease; /* Hiệu ứng chuyển mượt */
+                                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Hiệu ứng đổ bóng */
+                            }
+
+                                .apt-btn:hover {
+                                    background-color: #45a049; /* Màu nền khi hover */
+                                    transform: translateY(-3px); /* Hiệu ứng di chuyển nhẹ khi hover */
+                                    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2); /* Đổ bóng mạnh hơn khi hover */
+                                }
+
+                                .apt-btn:active {
+                                    background-color: #3e8e41; /* Màu nền khi click */
+                                    transform: translateY(1px); /* Nút nhấn xuống nhẹ khi click */
+                                    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2); /* Đổ bóng giảm khi click */
+                                }
+                        </style>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body pt-0">
+
+                <nav class="user-tabs mb-4">
+                    <ul class="nav nav-tabs nav-tabs-bottom nav-justified">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#doc_overview" data-toggle="tab">Tổng quan</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#doc_locations" data-toggle="tab">Địa điểm</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#doc_reviews" data-toggle="tab">Đánh giá</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#doc_business_hours" data-toggle="tab">Giờ làm việc</a>
+                        </li>
+                    </ul>
+                </nav>
+
+                <div class="tab-content pt-0">
+
+                    <div role="tabpanel" id="doc_overview" class="tab-pane fade show active">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-9">
+
+                                <div class="widget about-widget">
+                                    <h4 class="widget-title">Giới thiệu</h4>
+                                    <p>Điều quan trọng là phải chăm sóc bệnh nhân, được bệnh nhân theo dõi, nhưng điều đó sẽ xảy ra vào thời điểm có rất nhiều công sức và đau đớn. Để đi đến chi tiết nhỏ nhất, không ai nên thực hiện bất kỳ loại công việc nào trừ khi anh ta thu được lợi ích nào đó từ nó. Đừng tức giận với nỗi đau trong sự khiển trách trong niềm vui mà anh ấy muốn được thoát khỏi nỗi đau với hy vọng rằng không có sự sinh sản. Trừ khi họ bị dục vọng làm cho mù quáng, nếu không họ sẽ không bước ra; họ có lỗi khi từ bỏ nhiệm vụ của mình và làm mềm lòng, tức là lao động của họ.</p>
+                                </div>
+
+                                <div class="widget education-widget">
+                                    <h4 class="widget-title">Giáo dục</h4>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <a href="#/" class="name">Đại học Y Dược Thành Phố Hồ Chí Minh</a>
+                                                        <div>BDS</div>
+                                                        <span class="time">1998 - 2003</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <a href="#/" class="name">Đại học Y Dược Cần Thơ</a>
+                                                        <div>MDS</div>
+                                                        <span class="time">2003 - 2005</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="widget experience-widget">
+                                    <h4 class="widget-title">Công việc & Kinh nghiệm</h4>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <a href="#/" class="name">Bệnh Viện Chợ Rẩy Thành Phố Hồ Chí Minh</a>
+                                                        <span class="time">2010 - Present (5 years)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <a href="#/" class="name">Bệnh viện Nhi Đồng Thành Phố Hồ Chí Minh</a>
+                                                        <span class="time">2007 - 2010 (3 years)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <a href="#/" class="name">Bệnh viện Xuyên Á Thành Phố Hồ Chí Minh</a>
+                                                        <span class="time">2005 - 2007 (2 years)</span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="widget awards-widget">
+                                    <h4 class="widget-title">Giải thưởng</h4>
+                                    <div class="experience-box">
+                                        <ul class="experience-list">
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <p class="exp-year">Tháng 5 năm 2019</p>
+                                                        <h4 class="exp-title">Giải thưởng nhân đạo</h4>
+                                                        <p>Sự ghi nhận cho những nỗ lực phi thường của họ trong việc mang lại sức khỏe và hy vọng cho những cộng đồng kém may mắn. Với lòng từ bi và sự cống hiến, bác sĩ đã không chỉ chăm sóc cho bệnh nhân mà còn tham gia các chương trình từ thiện, đưa dịch vụ y tế đến những vùng sâu vùng xa. Họ đã đào tạo cộng đồng về các vấn đề sức khỏe thiết yếu và đối phó với các cuộc khủng hoảng y tế toàn cầu. Giải thưởng này không chỉ vinh danh tài năng và kỹ năng y tế mà còn tôn vinh những trái tim nhân hậu, là nguồn cảm hứng cho tất cả những ai theo đuổi con đường y khoa.</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <p class="exp-year">Tháng 3 năm 2011</p>
+                                                        <h4 class="exp-title">Giấy chứng nhận hoạt động tình nguyện quốc tế</h4>
+                                                        <p>Sự cống hiến và tận tâm của bác sĩ đã không chỉ giúp cải thiện sức khỏe của nhiều bệnh nhân mà còn nâng cao nhận thức về các vấn đề y tế quan trọng trong cộng đồng. Giấy chứng nhận này là minh chứng cho những đóng góp quý báu và lòng nhân ái mà bác sĩ đã dành cho những người kém may mắn.</p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="experience-user">
+                                                    <div class="before-circle"></div>
+                                                </div>
+                                                <div class="experience-content">
+                                                    <div class="timeline-content">
+                                                        <p class="exp-year">Tháng 5 năm 2008</p>
+                                                        <h4 class="exp-title">Giải thưởng chuyên khoa của năm</h4>
+                                                        <p>
+                                                            Với những nỗ lực không ngừng trong việc nâng cao chất lượng chăm sóc sức khỏe, bác sĩ đã có nhiều đóng góp quan trọng, từ việc nghiên cứu và ứng dụng các phương pháp điều trị mới đến việc đào tạo và truyền cảm hứng cho thế hệ y bác sĩ trẻ. Giải thưởng này ghi nhận những thành tựu nổi bật trong chuyên môn cũng như sự tận tâm đối với bệnh nhân, đồng thời khuyến khích những giá trị tốt đẹp trong ngành y tế. Sự cống hiến của bác sĩ đã mang lại niềm tin và hy vọng cho nhiều bệnh nhân và gia đình của họ.
+
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+
+                                <div class="service-list">
+                                    <h4>Dịch vụ</h4>
+                                    <ul class="clearfix">
+                                        <li>X-quang</li>
+                                        <li>Vệ sinh răng miệng</li>
+                                        <li>Giường bệnh</li>
+                                        <li>Y dược</li>
+                                        <li>Kích điện</li>
+                                        <li>Phẫu thuật</li>
+                                    </ul>
+                                </div>
+
+                                <div class="service-list">
+                                    <h4>Chuyên ngành</h4>
+                                    <ul class="clearfix">
+                                        <li>Nội tồng quát</li>
+                                        <li>Ngoại thần kinh</li>
+                                        <li>Khám và điều trị theo yêu cầu </li>
+                                        <li>Giãi phẩu bệnh</li>
+                                        <li>Bệnh nhiệt đới</li>
+                                        <li>Nội tiết</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" id="doc_locations" class="tab-pane fade">
+
+                        <div class="location-list">
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    <div class="clinic-content">
+                                        <h4 class="clinic-name"><a href="#">Trung Tâm Chăm Sóc Sức Khoẻ Thành Phố Hồ Chí Minh</a></h4>
+                                        <p class="doc-speciality">Bác sĩ thăm khám một cách tận tình</p>
+                                        <div class="rating">
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star"></i>
+                                            <span class="d-inline-block average-rating">(4)</span>
+                                        </div>
+                                        <div class="clinic-details mb-0">
+                                            <h5 class="clinic-direction">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                22 Phan Chu Trinh, Quận 1, Thành Phố Hồ Chí Minh <br>
+                                                <a href="https://www.google.com/maps/dir/?api=1&destination=22+Phan+Chu+Trinh,+Quận+1,+Thành+Phố+Hồ+Chí+Minh" target="_blank">Google Map</a>
+                                            </h5>
+                                            <ul>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-01.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-01.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-02.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-02.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-03.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-03.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-04.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-04.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="clinic-timing">
+                                        <div>
+                                            <p class="timings-days">
+                                                <span> Thứ hai - Thứ bảy </span>
+                                            </p>
+                                            <p class="timings-times">
+                                                <span>10:00 AM - 2:00 PM</span>
+                                                <span>4:00 PM - 9:00 PM</span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="timings-days">
+                                                <span>Chủ nhật</span>
+                                            </p>
+                                            <p class="timings-times">
+                                                <span>10:00 AM - 2:00 PM</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="consult-price">
+                                        $250
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="location-list">
+                            <div class="row">
+
+                                <div class="col-md-6">
+                                    <div class="clinic-content">
+                                        <h4 class="clinic-name"><a href="#">Phòng khám Nha khoa Gia đình</a></h4>
+                                        <p class="doc-speciality">Nha khoa cấy ghép răng miệng</p>
+                                        <div class="rating">
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star filled"></i>
+                                            <i class="fas fa-star"></i>
+                                            <span class="d-inline-block average-rating">(4)</span>
+                                        </div>
+                                        <div class="clinic-details mb-0">
+                                            <p class="clinic-direction">
+                                                <i class="fas fa-map-marker-alt"></i>
+                                                28 Phan Văn Trị, Quận Gò Vấp, Thành Phố Hồ Chí Minh <br>
+                                                <a href="https://www.google.com/maps/dir/?api=1&destination=28+Phan+Văn+Trị,+Quận+Gò+Vấp,+Thành+Phố+Hồ+Chí+Minh" target="_blank">Google Map</a>
+                                            </p>
+                                            <ul>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-01.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-01.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-02.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-02.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-03.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-03.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="~/Content/theme/img/features/feature-04.jpg" data-fancybox="gallery2">
+                                                        <img src="~/Content/theme/img/features/feature-04.jpg" alt="Feature Image">
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="clinic-timing">
+                                        <div>
+                                            <p class="timings-days">
+                                                <span> Thứ Hai - Thứ Sáu </span>
+                                            </p>
+                                            <p class="timings-times">
+                                                <span>11:00 AM - 1:00 PM</span>
+                                                <span>6:00 PM - 11:00 PM</span>
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p class="timings-days">
+                                                <span>Thứ bảy - Chủ nhật</span>
+                                            </p>
+                                            <p class="timings-times">
+                                                <span>8:00 AM - 10:00 AM</span>
+                                                <span>3:00 PM - 7:00 PM</span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2">
+                                    <div class="consult-price">
+                                        $350
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <head>
+                        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+                        <style>
+                            /* Tổng thể */
+                            body {
+                                font-family: Arial, sans-serif;
+                                background-color: #f8f9fa;
+                                margin: 0;
+                                padding: 20px;
+                            }
+
+                            /* Phần chứa bình luận */
+                            .write-review {
+                                background: #fff;
+                                border-radius: 8px;
+                                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                                padding: 20px;
+                            }
+
+                                /* Tiêu đề bình luận */
+                                .write-review h4 {
+                                    margin-bottom: 20px;
+                                    font-size: 1.5rem;
+                                }
+
+                            /* Danh sách bình luận */
+                            #commentsList {
+                                list-style: none;
+                                padding: 0;
+                            }
+
+                            /* Bình luận cá nhân */
+                            .comment {
+                                background: #f1f1f1;
+                                border-radius: 5px;
+                                padding: 15px;
+                                margin-bottom: 15px;
+                                position: relative;
+                            }
+
+                            /* Tên tác giả bình luận */
+                            .comment-author {
+                                font-weight: bold;
+                                font-size: 1.1rem;
+                                color: #333;
+                            }
+
+                            /* Đánh giá */
+                            .rating {
+                                color: #f39c12; /* Màu vàng cho sao */
+                                font-size: 1rem;
+                                margin: 5px 0;
+                            }
+
+                            /* Nội dung bình luận */
+                            .comment-content {
+                                margin: 10px 0;
+                                font-size: 0.95rem;
+                                color: #555;
+                            }
+
+                            /* Hành động bình luận */
+                            .comment-actions {
+                                font-size: 0.85rem;
+                                margin-top: 10px;
+                            }
+
+                                /* Nút thích và không thích */
+                                .comment-actions a {
+                                    text-decoration: none;
+                                    color: #007bff; /* Màu xanh cho liên kết */
+                                    margin-right: 10px;
+                                }
+
+                                    /* Nút thích và không thích - hover */
+                                    .comment-actions a:hover {
+                                        color: #0056b3; /* Màu xanh đậm khi hover */
+                                    }
+
+                            /* Nút gửi đánh giá */
+                            .submit-section {
+                                margin-top: 20px;
+                            }
+
+                            /* Nút gửi */
+                            .submit-btn {
+                                background-color: #007bff;
+                                color: white;
+                                border: none;
+                                padding: 10px 20px;
+                                border-radius: 5px;
+                                cursor: pointer;
+                            }
+
+                                /* Nút gửi - hover */
+                                .submit-btn:hover {
+                                    background-color: #0056b3;
+                                }
+
+                            /* Ký tự còn lại */
+                            #chars {
+                                color: #888; /* Màu xám cho thông tin ký tự còn lại */
+                            }
+
+                        </style>
+                    </head>
+
+                    <div role="tabpanel" id="doc_reviews" class="tab-pane fade">
+                        <div class="widget review-listing">
+                            <ul class="comments-list" id="commentsList">
+                                <!-- Bình luận mẫu -->
+                                <li>
+                                    <div class="comment">
+                                        <img class="avatar avatar-sm rounded-circle" alt="User Image" src="~/Content/theme/img/patients/patient.jpg">
+                                        <div class="comment-body">
+                                            <div class="meta-data">
+                                                <span class="comment-author">Richard Wilson</span>
+                                                <span class="comment-date">Đã đánh giá 2 ngày trước</span>
+                                                <div class="review-count rating">
+                                                    <i class="fas fa-star filled"></i>
+                                                    <i class="fas fa-star filled"></i>
+                                                    <i class="fas fa-star filled"></i>
+                                                    <i class="fas fa-star filled"></i>
+                                                    <i class="fas fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <p class="recommended"><i class="far fa-thumbs-up"></i> Tôi rất khuyên bác sĩ này!</p>
+                                            <p class="comment-content">
+                                                "Việc chăm sóc bệnh nhân không chỉ là một nghĩa vụ mà còn là một nghệ thuật. Trong khoảnh khắc khó khăn nhất, đội ngũ y tế chính là nguồn động viên lớn nhất. Họ không chỉ chữa trị, mà còn mang lại hy vọng và sự an ủi."
+                                            </p>
+                                            <div class="comment-reply">
+                                                <a class="comment-btn" href="#">
+                                                    <i class="fas fa-reply"></i> Hồi đáp
+                                                </a>
+                                                <p class="recommend-btn">
+                                                    <span>Gợi ý phản hồi:</span>
+                                                    <a href="#" class="like-btn">
+                                                        <i class="far fa-thumbs-up"></i> Đúng
+                                                    </a>
+                                                    <a href="#" class="dislike-btn">
+                                                        <i class="far fa-thumbs-down"></i> Sai
+                                                    </a>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <ul class="comments-reply">
+                                        <li>
+                                            <div class="comment">
+                                                <img class="avatar avatar-sm rounded-circle" alt="User Image" src="~/Content/theme/img/patients/patient1.jpg">
+                                                <div class="comment-body">
+                                                    <div class="meta-data">
+                                                        <span class="comment-author">Charlene Reed</span>
+                                                        <span class="comment-date">Đã đánh giá 3 ngày trước</span>
+                                                        <div class="review-count rating">
+                                                            <i class="fas fa-star filled"></i>
+                                                            <i class="fas fa-star filled"></i>
+                                                            <i class="fas fa-star filled"></i>
+                                                            <i class="fas fa-star filled"></i>
+                                                            <i class="fas fa-star"></i>
+                                                        </div>
+                                                    </div>
+                                                    <p class="comment-content">
+                                                        "Họ thực sự đã vượt qua mong đợi của tôi. Không chỉ chữa trị thể chất mà còn làm dịu đi những nỗi lo âu trong tâm hồn."
+                                                    </p>
+                                                    <div class="comment-reply">
+                                                        <a class="comment-btn" href="#">
+                                                            <i class="fas fa-reply"></i> Hồi đáp
+                                                        </a>
+                                                        <p class="recommend-btn">
+                                                            <span>Gợi ý phản hồi:</span>
+                                                            <a href="#" class="like-btn">
+                                                                <i class="far fa-thumbs-up"></i> Đúng
+                                                            </a>
+                                                            <a href="#" class="dislike-btn">
+                                                                <i class="far fa-thumbs-down"></i> Sai
+                                                            </a>
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </li>
+
+                                <!-- Thêm bình luận sẽ hiển thị ở đây -->
+                            </ul>
+
+                            <div class="all-feedback text-center">
+                                <a href="#" class="btn btn-primary btn-sm" id="showAllComments">
+                                    Hiển thị tất cả phản hồi
+                                    <strong>(50)</strong>
+                                </a>
+                            </div>
+                            <ul class="comments-list" id="commentsList">
+                                <!-- Bình luận sẽ được hiển thị ở đây -->
+                            </ul>
+
+                        </div>
+
+                        <div class="write-review">
+                            <h4>Viết đánh giá cho <strong>Tiến sĩ Darren Elder</strong></h4>
+
+                            <form id="reviewForm">
+                                <div class="form-group">
+                                    <label>ĐÁNH GIÁ</label>
+                                    <div class="star-rating">
+                                        <input id="star-5" type="radio" name="rating" value="5">
+                                        <label for="star-5" title="5 stars">
+                                            <i class="active fa fa-star"></i>
+                                        </label>
+                                        <input id="star-4" type="radio" name="rating" value="4">
+                                        <label for="star-4" title="4 stars">
+                                            <i class="active fa fa-star"></i>
+                                        </label>
+                                        <input id="star-3" type="radio" name="rating" value="3">
+                                        <label for="star-3" title="3 stars">
+                                            <i class="active fa fa-star"></i>
+                                        </label>
+                                        <input id="star-2" type="radio" name="rating" value="2">
+                                        <label for="star-2" title="2 stars">
+                                            <i class="active fa fa-star"></i>
+                                        </label>
+                                        <input id="star-1" type="radio" name="rating" value="1">
+                                        <label for="star-1" title="1 star">
+                                            <i class="active fa fa-star"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Tiêu đề đánh giá của bạn</label>
+                                    <input class="form-control" type="text" placeholder="Nếu bạn có thể nói nó trong một câu, bạn sẽ nói gì?" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Đánh giá của bạn</label>
+                                    <textarea id="review_desc" maxlength="100" class="form-control" required></textarea>
+                                    <div class="d-flex justify-content-between mt-3"><small class="text-muted"><span id="chars">100</span> ký tự</small></div>
+                                </div>
+                                <hr>
+                                <div class="form-group">
+                                    <div class="terms-accept">
+                                        <div class="custom-checkbox">
+                                            <input type="checkbox" id="terms_accept" required>
+                                            <label for="terms_accept">Tôi đã đọc và chấp nhận <a href="#">Điều khoản &amp; Điều kiện</a></label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="submit-section">
+                                    <button type="submit" class="btn btn-primary submit-btn">Thêm đánh giá</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <script>
+
+                        const comments = [
+                            { rating: 5, content: "Bác sĩ rất tận tâm và chu đáo!" },
+                            { rating: 4, content: "Thời gian chờ hơi lâu nhưng dịch vụ tốt." },
+                            { rating: 5, content: "Tôi rất hài lòng với sự chăm sóc ở đây!" },
+                            { rating: 3, content: "Cần cải thiện thêm về giao tiếp với bệnh nhân." },
+                            { rating: 5, content: "Bác sĩ rất chuyên nghiệp và hiểu biết." },
+                            { rating: 4, content: "Mọi thứ đều ổn, chỉ cần giảm thời gian chờ." },
+                            { rating: 5, content: "Cảm giác rất an tâm khi đến đây." },
+                            { rating: 2, content: "Tôi khá thất vọng với dịch vụ." },
+                            { rating: 4, content: "Đội ngũ y tế rất tận tâm." },
+                            { rating: 5, content: "Dịch vụ y tế chất lượng cao!" },
+                            { rating: 3, content: "Cần cải thiện việc phục vụ." },
+                            { rating: 4, content: "Tôi sẽ quay lại lần sau!" },
+                            { rating: 5, content: "Cảm ơn bác sĩ đã giúp tôi hồi phục nhanh chóng!" },
+                            { rating: 2, content: "Tôi không hài lòng với trải nghiệm lần này." },
+                            { rating: 4, content: "Rất ấn tượng với sự chuyên nghiệp." },
+                            { rating: 5, content: "Tôi sẽ giới thiệu cho bạn bè!" },
+                            { rating: 3, content: "Mọi thứ đều tốt, nhưng cần cải thiện." },
+                            { rating: 4, content: "Cảm ơn sự chăm sóc tận tình!" },
+                            { rating: 5, content: "Dịch vụ tuyệt vời, tôi rất hài lòng!" },
+                            { rating: 2, content: "Cần cải thiện không gian chờ đợi." },
+                            { rating: 4, content: "Tôi cảm thấy thoải mái khi đến đây." },
+                            { rating: 5, content: "Bác sĩ rất nhiệt tình và thân thiện." },
+                            { rating: 3, content: "Cảm giác như mọi thứ đều rất vội vàng." },
+                            { rating: 4, content: "Phục vụ nhanh chóng và hiệu quả." },
+                            { rating: 5, content: "Tôi rất ấn tượng với dịch vụ ở đây!" },
+                            { rating: 2, content: "Có nhiều điều cần cải thiện." },
+                            { rating: 4, content: "Rất hài lòng với dịch vụ!" },
+                            { rating: 5, content: "Cảm ơn bác sĩ đã giúp tôi!" },
+                            { rating: 3, content: "Tôi đã hy vọng nhiều hơn." },
+                            { rating: 4, content: "Rất chuyên nghiệp và tận tâm." },
+                            { rating: 5, content: "Một trải nghiệm tuyệt vời!" },
+                            { rating: 2, content: "Dịch vụ không như mong đợi." },
+                            { rating: 4, content: "Tôi sẽ quay lại khi cần!" },
+                            { rating: 5, content: "Cảm ơn vì đã chăm sóc tôi chu đáo!" },
+                            { rating: 1, content: "Dịch vụ không tốt lắm." },
+                            { rating: 3, content: "Một trải nghiệm tạm ổn." },
+                            { rating: 4, content: "Cảm ơn sự chăm sóc tận tình." },
+                            { rating: 5, content: "Dịch vụ rất tuyệt vời!" },
+                            { rating: 2, content: "Hơi thất vọng về dịch vụ." },
+                            { rating: 4, content: "Bác sĩ rất tận tâm và chu đáo." },
+                            { rating: 5, content: "Cảm ơn bác sĩ vì sự chăm sóc!" },
+                            { rating: 3, content: "Cần cải thiện một số khía cạnh." },
+                            { rating: 4, content: "Rất hài lòng với dịch vụ ở đây!" },
+                            { rating: 5, content: "Cảm ơn bác sĩ đã giúp tôi hồi phục!" },
+                            { rating: 2, content: "Có quá nhiều thời gian chờ đợi." },
+                            { rating: 4, content: "Tôi rất hài lòng với dịch vụ!" },
+                            { rating: 5, content: "Cảm ơn vì đã chăm sóc tôi chu đáo!" },
+                            { rating: 3, content: "Tôi đã mong đợi nhiều hơn từ dịch vụ." },
+                            { rating: 4, content: "Đội ngũ rất chuyên nghiệp!" },
+                            { rating: 5, content: "Tôi sẽ trở lại!" },
+                            { rating: 1, content: "Dịch vụ không như mong đợi." },
+                            { rating: 4, content: "Cảm ơn đã hỗ trợ tận tình." },
+                            { rating: 5, content: "Đây là một trong những bệnh viện tốt nhất tôi từng đến!" },
+                            { rating: 3, content: "Mọi thứ chỉ ở mức tạm ổn." },
+                            { rating: 4, content: "Cần cải thiện thêm." },
+                            { rating: 5, content: "Tôi rất ấn tượng!" },
+                            { rating: 2, content: "Tôi không hài lòng với trải nghiệm." },
+                            { rating: 4, content: "Cảm ơn vì sự chăm sóc tận tình." },
+                            { rating: 5, content: "Tôi đã cảm thấy an tâm khi điều trị." },
+                            { rating: 3, content: "Tôi hy vọng sẽ thấy cải thiện trong tương lai." },
+                            { rating: 4, content: "Dịch vụ rất chuyên nghiệp!" },
+                            { rating: 5, content: "Tôi rất hài lòng với trải nghiệm." },
+                            { rating: 2, content: "Cần cải thiện quy trình làm việc." },
+                            { rating: 4, content: "Tôi đã có một trải nghiệm tốt." },
+                            { rating: 5, content: "Dịch vụ y tế tuyệt vời!" },
+                            { rating: 1, content: "Tôi sẽ không quay lại." },
+                            { rating: 3, content: "Đôi khi có sự bất tiện." },
+                            { rating: 4, content: "Cảm ơn vì đã chăm sóc tôi." },
+                            { rating: 5, content: "Một trải nghiệm đáng nhớ!" }
+                        ];
+
+                        const names = [
+                            "Nguyễn Văn A", "Trần Thị B", "Lê Văn C", "Phạm Thị D", "Nguyễn Thị E",
+                            "Đỗ Văn F", "Vũ Thị G", "Nguyễn Văn H", "Trần Văn I", "Lê Thị J",
+                            "Phạm Văn K", "Nguyễn Thị L", "Đỗ Thị M", "Vũ Văn N", "Nguyễn Văn O",
+                            "Trần Thị P", "Lê Văn Q", "Phạm Thị R", "Nguyễn Thị S", "Đỗ Văn T",
+                            "Vũ Thị U", "Nguyễn Văn V", "Trần Văn W", "Lê Thị X", "Phạm Văn Y",
+                            "Nguyễn Thị Z", "Đỗ Văn AA", "Vũ Thị AB", "Nguyễn Văn AC", "Trần Thị AD",
+                            "Lê Văn AE", "Phạm Thị AF", "Nguyễn Thị AG", "Đỗ Văn AH", "Vũ Văn AI",
+                            "Nguyễn Thị AJ", "Trần Văn AK", "Lê Văn AL", "Phạm Thị AM", "Nguyễn Văn AN",
+                            "Đỗ Thị AO", "Vũ Thị AP", "Nguyễn Văn AQ", "Trần Thị AR", "Lê Văn AS",
+                            "Phạm Văn AT", "Nguyễn Thị AU", "Đỗ Văn AV", "Vũ Văn AW", "Nguyễn Văn AX",
+                            "Trần Thị AY", "Lê Văn AZ", "Phạm Văn BA", "Nguyễn Thị BB", "Đỗ Văn BC",
+                            "Vũ Thị BD", "Nguyễn Văn BE", "Trần Thị BF", "Lê Văn BG", "Phạm Thị BH"
+                        ];
+
+                        document.getElementById("showAllComments").addEventListener("click", function (event) {
+                            event.preventDefault(); // Ngăn chặn hành vi mặc định của liên kết
+                            const commentsList = document.getElementById("commentsList");
+                            comments.forEach((comment, index) => {
+                                const newComment = document.createElement("li");
+                                newComment.classList.add("comment");
+                                newComment.innerHTML = `
+                                        <div class="comment-author">${names[index % names.length]}</div>
+                                        <div class="rating">${'★'.repeat(comment.rating)}${'☆'.repeat(5 - comment.rating)}</div>
+                                        <div class="comment-content">${comment.content}</div>
+                                        <div class="comment-actions">
+                                            <p>
+                                                <a href="#" class="like-btn">
+                                                    <i class="far fa-thumbs-up"></i> Đúng
+                                                </a>
+                                                <a href="#" class="dislike-btn">
+                                                    <i class="far fa-thumbs-down"></i> Sai
+                                                </a>
+                                            </p>
+                                        </div>
+                                    `;
+                                commentsList.appendChild(newComment);
+                            });
+                        });
+
+                    </script>
+
+
+                    <div role="tabpanel" id="doc_business_hours" class="tab-pane fade">
+                        <div class="row">
+                            <div class="col-md-6 offset-md-3">
+
+                                <div class="widget business-widget">
+                                    <div class="widget-content">
+                                        <div class="listing-hours">
+                                            <div class="listing-day current">
+                                                <div class="day">Hôm nay <span>Ngày 5 tháng 11 năm 2019</span></div>
+                                                <div class="time-items">
+                                                    <span class="open-status"><span class="badge bg-success-light">Mở bây giờ</span></span>
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ hai</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ ba</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ tư</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ năm</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ sáu</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day">
+                                                <div class="day">Thứ bảy</div>
+                                                <div class="time-items">
+                                                    <span class="time">07:00 AM - 09:00 PM</span>
+                                                </div>
+                                            </div>
+                                            <div class="listing-day closed">
+                                                <div class="day">Chủ nhật</div>
+                                                <div class="time-items">
+                                                    <span class="time"><span class="badge bg-danger-light">Đóng</span></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

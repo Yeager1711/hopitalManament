@@ -1,0 +1,408 @@
+﻿@using BELibrary.Entity
+@using HospitalManagement.Handler
+@{
+    ViewBag.Title = "Sửa trang cá nhân";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var user = CookiesManage.GetUser();
+    var patient = (Patient)ViewBag.Patient ?? new Patient();
+}
+<style>
+
+    .bg-black-333 {
+        background-color: darkseagreen;
+        margin-top: 10px;
+        padding-top: 10px;
+        padding-bottom: 32px;
+        color: white;
+    }
+
+    .full-name {
+        padding-top: 12px;
+        color: white;
+    }
+
+    .styled-icons li {
+        display: inline-block;
+        margin-bottom: 0;
+        margin-top: 0;
+    }
+
+    .styled-icons.icon-sm a {
+        font-size: 13px;
+        height: 30px;
+        line-height: 30px;
+        margin: 2px 7px 2px 0;
+        width: 30px;
+    }
+
+    .styled-icons.icon-circled a {
+        border-radius: 50%;
+    }
+
+    .styled-icons.icon-gray a {
+        background-color: #eeeeee;
+        color: #555555;
+        display: block;
+        font-size: 18px;
+        height: 36px;
+        line-height: 36px;
+        width: 36px;
+    }
+
+    .mb-15 {
+        margin-bottom: 15px !important;
+    }
+
+    .mt-15 {
+        margin-top: 15px !important;
+    }
+
+    ul, ol {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .fa {
+        display: inline-block;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: inherit;
+        text-rendering: auto;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+</style>
+
+<!-- Start main-content -->
+<div class="main-content">
+
+    <!-- Section: inner-header -->
+    <div class="breadcrumb-bar" style="margin-bottom: 20px">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-8 col-12">
+                    <nav aria-label="breadcrumb" class="page-breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">@user.FullName</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Section: Doctor Details -->
+    <style>
+        /* CSS cho khung thông tin người dùng */
+        .info {
+            background-color: #2c3e50; /* Màu nền cho khung thông tin */
+            border-radius: 8px; /* Bo tròn góc khung thông tin */
+            padding: 20px; /* Padding cho khung thông tin */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Đổ bóng cho khung thông tin */
+        }
+
+        .full-name {
+            font-weight: bold; /* Đậm tên người dùng */
+            color: #ecf0f1; /* Màu chữ cho tên */
+            margin: 10px 0; /* Khoảng cách trên và dưới tên */
+        }
+
+        .styled-icons li {
+            margin: 0 5px; /* Khoảng cách giữa các biểu tượng */
+        }
+
+        .styled-icons a {
+            transition: transform 0.3s; /* Hiệu ứng chuyển động khi hover */
+            color: #555; /* Màu sắc mặc định cho biểu tượng */
+        }
+
+            .styled-icons a:hover {
+                transform: scale(1.2); /* Phóng to biểu tượng khi hover */
+                color: #3498db; /* Màu sắc khi hover */
+            }
+
+        .btn {
+            width: 45%; /* Chiều rộng nút để chúng nằm cạnh nhau */
+            margin: 5px 0; /* Khoảng cách giữa các nút */
+        }
+
+        .btn-info {
+            background-color: #17a2b8; /* Màu nền cho nút sửa */
+        }
+
+        .btn-danger {
+            background-color: #dc3545; /* Màu nền cho nút đăng xuất */
+        }
+    </style>
+
+    <section class="">
+        <div class="container">
+            <div class="section-content">
+                <div class="row">
+                    <div class="col-sx-12 col-sm-4 col-md-4">
+                        <div class="doctor-thumb">
+                            <img src="@(string.IsNullOrEmpty(patient.ImageProfile) ? "/Areas/Admin/Content/img/profile-photos/1.png" : patient.ImageProfile)" class="img-profile img-circle" alt="Profile Picture">
+                        </div>
+
+                        <div class="info p-20 bg-black-333">
+                            <h4 class="full-name text-center">@user.FullName</h4>
+                            <ul class="list angle-double-right m-0 text-center">
+                                <li class="text-gray-silver"><strong class="text-gray-lighter">Số điện thoại</strong><br> @user.Phone</li>
+                            </ul>
+                            <ul class="styled-icons icon-gray icon-circled icon-sm mt-15 mb-15 text-center">
+                                <li><a href="https://facebook.com/yourprofile" target="_blank"><i class="fa fa-facebook"></i></a></li>
+                                <li><a href="https://skype.com/yourprofile" target="_blank"><i class="fa fa-skype"></i></a></li>
+                                <li><a href="https://twitter.com/yourprofile" target="_blank"><i class="fa fa-twitter"></i></a></li>
+                                <li><a href="https://linkedin.com/in/yourprofile" target="_blank"><i class="fa fa-linkedin"></i></a></li>
+                            </ul>
+
+                            <style>
+                                /* hình ảnh avt */
+                                .doctor-thumb {
+                                    position: relative;
+                                    display: inline-block;
+                                    overflow: hidden;
+                                    border-radius: 50%;
+                                    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3); /* Thêm bóng cho ảnh */
+                                    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Hiệu ứng chuyển đổi mượt mà */
+                                }
+
+                                    .doctor-thumb:hover {
+                                        transform: scale(1.05); /* Phóng to nhẹ khi hover */
+                                        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.5); /* Thêm bóng khi hover */
+                                    }
+
+                                .img-profile {
+                                    width: 100%; /* Đảm bảo ảnh full container */
+                                    height: auto;
+                                    border-radius: 50%; /* Giữ tròn ảnh */
+                                    transition: filter 0.3s ease; /* Hiệu ứng filter khi hover */
+                                }
+
+                                .doctor-thumb:hover .img-profile {
+                                    filter: brightness(1.1) contrast(1.1); /* Điều chỉnh độ sáng và tương phản khi hover */
+                                }
+                                
+                                /*nút cập nhật 1*/
+                                /* Style cho nút Cập nhật */
+                                .btn-update {
+                                    background-color: #007bff; /* Màu nền ban đầu */
+                                    color: white; /* Màu chữ */
+                                    border-radius: 5px; /* Bo góc mềm mại */
+                                    padding: 15px 0; /* Tăng khoảng cách trên dưới của chữ */
+                                    font-size: 18px; /* Kích thước chữ */
+                                    font-weight: bold; /* Tạo cảm giác chắc chắn */
+                                    border: none; /* Bỏ viền */
+                                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tạo đổ bóng nhẹ */
+                                    transition: background-color 0.3s ease, transform 0.2s ease; /* Hiệu ứng hover và bấm */
+                                }
+
+                                    .btn-update:hover {
+                                        background-color: #218838; /* Màu nền khi hover */
+                                        transform: translateY(-2px); /* Nhấn nhẹ khi hover */
+                                    }
+
+                                    .btn-update:active {
+                                        background-color: #1e7e34; /* Màu nền khi bấm */
+                                        transform: translateY(0); /* Trở lại vị trí ban đầu khi bấm */
+                                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Đổ bóng nhẹ khi bấm */
+                                    }
+
+                                .form-group {
+                                    margin-top: 15px;
+                                }
+
+                                .mt-15 {
+                                    margin-top: 15px !important;
+                                }
+
+                                .btn-block {
+                                    width: 100%;
+                                    display: block; /* Đảm bảo nút chiếm toàn bộ chiều rộng */
+                                }
+
+
+                                /* Style cho nút Cập nhật 2 */
+                                .btn-update {
+                                    background-color: #007bff; /* Màu nền ban đầu */
+                                    color: white; /* Màu chữ */
+                                    border-radius: 25px; /* Bo tròn các góc */
+                                    padding: 10px 20px; /* Khoảng cách padding cho nút */
+                                    font-size: 14px; /* Kích thước chữ */
+                                    border: none; /* Bỏ viền */
+                                    transition: background-color 0.3s ease, transform 0.3s ease; /* Hiệu ứng khi hover */
+                                }
+
+                                    .btn-update:hover {
+                                        background-color: #0056b3; /* Màu nền khi hover */
+                                        transform: scale(1.05); /* Phóng to nhẹ khi hover */
+                                    }
+
+                                    .btn-update:active {
+                                        transform: scale(0.98); /* Hiệu ứng nhỏ lại khi bấm giữ */
+                                        background-color: #00408d; /* Màu nền khi bấm */
+                                    }
+
+                                .form-group {
+                                    margin-top: 15px;
+                                }
+
+                                .mt-15 {
+                                    margin-top: 15px !important;
+                                }
+
+                                .text-center {
+                                    text-align: center;
+                                }
+
+                                /* thông tint */
+                                .styled-icons a {
+                                    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+                                }
+
+                                    .styled-icons a:hover {
+                                        background-color: #3b5998; /* Tùy chỉnh màu nền khi hover */
+                                        color: white; /* Màu sắc biểu tượng khi hover */
+                                        transform: scale(1.1); /* Phóng to nhẹ khi hover */
+                                    }
+
+                                .fa-facebook:hover {
+                                    background-color: #3b5998; /* Màu của Facebook */
+                                }
+
+                                .fa-skype:hover {
+                                    background-color: #00aff0; /* Màu của Skype */
+                                }
+
+                                .fa-twitter:hover {
+                                    background-color: #00acee; /* Màu của Twitter */
+                                }
+
+                                .fa-linkedin:hover {
+                                    background-color: #0e76a8; /* Màu của LinkedIn */
+                                }
+
+                                .styled-icons a {
+                                    padding: 10px;
+                                    border-radius: 50%;
+                                    background-color: #eeeeee;
+                                    display: inline-block;
+                                    font-size: 20px;
+                                    width: 36px;
+                                    height: 36px;
+                                    line-height: 36px;
+                                    text-align: center;
+                                    margin: 0 5px;
+                                    color: #555555;
+                                    transition: all 0.3s ease;
+                                }
+
+                                    .styled-icons a:hover {
+                                        transform: scale(1.1);
+                                        color: #fff;
+                                    }
+                            </style>
+
+                            <div class="text-center">
+                                <a class="btn btn-info btn-flat mt-10 mb-sm-30" href="/account/edit">Sửa</a>
+                                <a class="btn btn-danger btn-flat mt-10 mb-sm-30" href="/account/logout">Đăng xuất</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-12 col-sm-8 col-md-8">
+                        <form name="reg-form" class="register-form" method="post" id="frmEdit">
+                            <div class="icon-box mb-0 p-0">
+                                <a href="#" class="icon icon-bordered icon-rounded icon-sm pull-left mb-0 mr-10">
+                                    <i class="pe-7s-users"></i>
+                                </a>
+                                <h4 class="text-gray pt-10 mt-0 mb-30">SỬA TRANG CÁ NHÂN</h4>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="form_name">Tên</label>
+                                    <input name="FullName" class="form-control" type="text" required value="@user.FullName">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label for="form_gender">Giới tính</label>
+                                    <select name="Gender" class="form-control" required value="@user.Gender.ToString()">
+                                        <option>---- Lựa chọn ----</option>
+                                        <option value="True" @(user.Gender ? "selected" : "")>Nam</option>
+                                        <option value="False" @(!user.Gender ? "selected" : "")>Nữ</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="form_choose_username">Tên đăng nhập</label>
+                                    <input id="form_choose_username" name="Username" class="form-control" type="text" required disabled value="@user.UserName">
+                                </div>
+
+                                <div class="form-group col-md-6">
+                                    <label>Số điện thoại</label>
+                                    <input name="Phone" class="form-control" type="text" value="@user.Phone">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label for="exampleInputFile">Ảnh đại diện</label>
+                                    <input type="file" id="file" name="avataUpload">
+                                    <p class="help-block">Cập nhật ảnh đại diện.</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button class="btn btn-success btn-lg btn-block mt-15" type="submit" id="btnReg">Cập nhật</button>
+                            </div>
+                        </form>
+
+                        <hr class="mt-70 mb-70">
+
+                        <form name="editprofile-form" method="post" id="updatePass">
+                            <div class="icon-box mb-0 p-0">
+                                <a href="#" class="icon icon-bordered icon-rounded icon-sm pull-left mb-0 mr-10" style="padding-right: 10px;">
+                                    <i class="fa fa-key" style=""></i>
+                                </a>
+                                <h4 class="text-gray pt-10 mt-0 mb-30">Đổi mật khẩu</h4>
+                            </div>
+                            <hr>
+                            <p class="text-gray">
+                                Mật khẩu cần thay đổi thường xuyên vì lý do bảo mật.
+                            </p>
+
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <label>Mật khẩu</label>
+                                    <input name="NewPassword" class="form-control" type="password">
+                                </div>
+                                <div class="form-group col-md-6">
+                                    <label>Nhập lại mật khẩu</label>
+                                    <input name="RePassword" class="form-control" type="password">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-md-12">
+                                    <label>Mật khẩu cũ</label>
+                                    <input name="OldPassword" class="form-control" type="password">
+                                </div>
+                            </div>
+                            <div class="form-group text-center">
+                                <button class="btn btn-primary btn-update btn-sm mt-15" type="submit">Cập nhật</button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<!-- end main-content -->
+@section Scripts {
+    <script src="~/Scripts/js/live/edit.account.js"></script>
+}

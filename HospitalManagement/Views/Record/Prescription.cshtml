@@ -1,0 +1,160 @@
+﻿@using BELibrary.Entity
+@using BELibrary.Utils
+@model List<Prescription>
+
+@{
+    ViewBag.Title = "Đơn thuốc";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container" style="padding-top: 250px">
+    <h2 class="text-center"> Thông tin đơn thuốc</h2>
+    <div class="panel" style="margin-bottom: 0">
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class="table table-striped" id="tblData">
+                    <thead>
+                        <tr>
+                            <th class="text-center">STT</th>
+                            <th class="text-center">Tên thuốc </th>
+                            <th class="text-center">Số lượng </th>
+                            <th class="text-center">Ghi chú </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="4" class="text-center">Không có đơn thuốc.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            foreach (var item in Model.Select((value, index) => new { index = (index + 1), value }))
+                            {
+                                <tr id="row_@item.value.DetailPrescription.Id">
+                                    <td class="text-center"><a class="btn-link" href="#">@item.index</a></td>
+                                    <td class="text-center">@item.value.DetailPrescription.Medicine.Name</td>
+                                    <td class="text-center">@item.value.DetailPrescription.Amount - @item.value.DetailPrescription.Unit </td>
+                                    <td class="text-center">
+                                        <textarea rows="5" class="form-control" style="min-width: 370px" disabled="">@item.value.DetailPrescription.Note</textarea>
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-center pt-3" style="padding-bottom: 20px">
+            <button class="btn btn-primary" onclick="window.history.back()"> Quay lại</button>
+        </div>
+    </div>
+</div>
+<style>
+    /* Định dạng chung cho container */
+    .container {
+        padding-top: 100px;
+        padding-bottom: 50px;
+        background-color: #f9f9f9;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        max-width: 80%;
+        margin: auto;
+    }
+
+    /* Tiêu đề */
+    h2.text-center {
+        font-family: 'Roboto', sans-serif;
+        font-size: 32px;
+        font-weight: 600;
+        color: #4a4a4a;
+        margin-bottom: 30px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Bảng đơn thuốc */
+    .table-responsive {
+        margin-top: 20px;
+    }
+
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: white;
+        margin-bottom: 20px;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: #f2f2f2;
+    }
+
+    /* Định dạng các ô của bảng */
+    .table th, .table td {
+        text-align: center;
+        padding: 12px;
+        border: 1px solid #ddd;
+        font-family: 'Roboto', sans-serif;
+        font-size: 16px;
+        color: #333;
+    }
+
+    /* Tiêu đề bảng */
+    .table th {
+        background-color: #4caf50;
+        color: white;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    /* Các nút và liên kết */
+    .btn-link {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .btn-link:hover {
+            text-decoration: underline;
+        }
+
+    textarea.form-control {
+        resize: none;
+        font-family: 'Roboto', sans-serif;
+        font-size: 14px;
+        color: #333;
+    }
+
+    /* Nút quay lại */
+    button.btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+        button.btn-primary:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        button.btn-primary:active {
+            background-color: #004494;
+            transform: translateY(0);
+        }
+
+    .text-center.pt-3 {
+        padding-top: 20px;
+    }
+
+</style>
+
+<!-- end main-content -->
+@section Scripts {
+}

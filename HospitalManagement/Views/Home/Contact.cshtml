@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<style>
+    body {
+        font-family: Arial, sans-serif; /* Phông chữ cho toàn bộ trang */
+        background-color: #f4f7fa; /* Màu nền nhẹ nhàng */
+        color: #333; /* Màu chữ chính */
+        padding: 20px; /* Khoảng cách bên trong */
+    }
+
+    address {
+        background: #fff; /* Nền trắng cho phần địa chỉ */
+        border-radius: 8px; /* Bo góc */
+        padding: 20px; /* Khoảng cách bên trong */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Bóng đổ nhẹ */
+        margin-bottom: 20px; /* Khoảng cách giữa các địa chỉ */
+        transition: transform 0.3s; /* Hiệu ứng khi hover */
+    }
+
+        address:hover {
+            transform: translateY(-5px); /* Nâng lên một chút khi hover */
+        }
+
+    strong {
+        display: block; /* Hiển thị tiêu đề ở dòng mới */
+        margin-bottom: 10px; /* Khoảng cách dưới tiêu đề */
+        font-size: 1.2em; /* Kích thước chữ lớn hơn cho tiêu đề */
+        color: #007bff; /* Màu cho tiêu đề */
+    }
+
+    abbr {
+        font-weight: bold; /* In đậm chữ viết tắt */
+        color: #007bff; /* Màu chữ viết tắt */
+    }
+
+    a {
+        color: #007bff; /* Màu chữ cho liên kết */
+        text-decoration: none; /* Bỏ gạch chân */
+        transition: color 0.3s ease; /* Hiệu ứng chuyển màu */
+    }
+
+        a:hover {
+            color: #0056b3; /* Màu chữ khi hover */
+            text-decoration: underline; /* Gạch chân khi hover */
+        }
+</style>
+
+<address>
+    <strong>LIÊN HỆ</strong><br />
+    <abbr title="Tên">Tên:</abbr>
+    ADMIN.<br />
+    <abbr title="Số điện thoại">Số điện thoại:</abbr>
+    <a href="tel:0354477027">035.44 77.027</a><br />
+    <abbr title="Địa chỉ">Địa chỉ:</abbr>
+    Đường Nguyễn Văn Bứa, huyện Hóc Môn, Thành Phố Hồ Chí Minh.
+</address>
+
+<address>
+    <strong>Hỗ trợ:</strong>
+    <div class="support-item">
+        <span>Email: </span>
+        <a href="mailto:Support@example.com">Support@example.com</a>
+    </div>
+    <div class="support-item">
+        <span>Tiếp thị: </span>
+        <a href="mailto:Marketing@example.com">Marketing@example.com</a>
+    </div>
+</address>
+

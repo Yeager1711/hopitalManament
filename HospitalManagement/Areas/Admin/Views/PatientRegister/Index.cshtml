@@ -1,0 +1,353 @@
+﻿@using BELibrary.Entity
+@using BELibrary.Utils
+@model List<PatientRegister>
+@{
+    ViewBag.Title = ViewBag.Feature + " " + ViewBag.Element;
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+@section CSS{
+    <!--DataTables [ OPTIONAL ]-->
+    <link href="/Areas/Admin/Content/plugins/datatables/media/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="/Areas/Admin/Content/plugins/datatables/extensions/Responsive/css/responsive.dataTables.min.css" rel="stylesheet">
+}
+<!--List-->
+<div class="panel">
+    <div class="panel-body">
+
+        <div class="pad-btm form-inline">
+            <div class="row">
+                <div class="col-sm-6 table-toolbar-left">
+                    <button data-toggle="modal" onclick="openModal(false)" class="btn btn-success"><i class="demo-pli-add"></i> Thêm</button>
+                </div>
+                <div class="col-sm-6 table-toolbar-right">
+                    <button onclick="window.history.back();" class="btn btn-primary"><i class="demo-pli-arrow-left-2"></i> Quay lại</button>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-striped" id="tblData">
+                <thead>
+                    <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Bệnh nhân </th>
+                        <th class="text-center">Phòng khám</th>
+                        <th class="text-center">Ngày bốc số</th>
+                        <th class="text-center">Số</th>
+                        <th class="text-center">Hoạt động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Select((value, index) => new { index = (index + 1), value }))
+                    {
+                        <tr id="row_@item.value.Id">
+                            <td class="text-center"><a class="btn-link" href="#">@item.index</a></td>
+                            <td class="text-center">@item.value.Patient.FullName</td>
+                            <td>@item.value.Room.Description</td>
+                            <td>@item.value.StartTime</td>
+                            <td>@item.value.Number</td>
+                            <td class="text-center">
+                                @if (item.value.ChangeRoomId.HasValue)
+                                {
+                                    <button class="btn btn-success btn-sm btn-icon  add-tooltip" data-original-title="Chuyển qua phòng @item.value.ChangeRoomName" data-container="body" onclick="openModalChangeRoom(true,'@item.value.Id', '@item.value.ChangeRoomId')"><i class="fa fa-exchange" aria-hidden="true"></i> Chuyển qua @item.value.ChangeRoomName</button>
+                                }
+                                <button class="btn btn-info btn-icon" onclick="openModal(true,'@item.value.Id')"><i class="demo-psi-pen-5 icon-lg"></i></button>
+                                <button class="btn btn-danger btn-icon" onclick="deleteElement('@item.value.Id','@item.value.Id')"><i class="demo-psi-recycling icon-lg"></i></button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Change Room-->
+<div class="modal fade" id="change-room-modal" role="dialog" aria-labelledby="create" aria-hidden="true">
+    <div class="modal-dialog" style="padding: 5% 0;">
+        <div class="modal-content">
+            <form id="change-room-modal-form" class="form-horizontal" method="post">
+                <input type="hidden" name="Id" />
+                <input type="hidden" name="StartTime" />
+                <input type="hidden" name="isEdit" />
+                <!--Modal header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+                    <h4 class="modal-title">@ViewBag.Element</h4>
+                </div>
+
+                <!--Modal body-->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Khoa</label>
+                        <div class="col-lg-7 input-group mar-btm">
+                            @Html.DropDownList("RoomId", (SelectList)ViewBag.Rooms, "-- Chọn phòng --",
+                                new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                </div>
+                <!--Modal footer-->
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Đóng</button>
+                    <button class="btn btn-success" type="button" onclick="changeRoom()">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--Create-->
+<div class="modal fade" id="data-modal" role="dialog" tabindex="-1" aria-labelledby="create" aria-hidden="true">
+    <div class="modal-dialog" style="padding: 5% 0;">
+        <div class="modal-content">
+            <form id="modal-form" class="form-horizontal" method="post">
+                <input type="hidden" name="Id" />
+                <input type="hidden" name="isEdit" />
+                <!--Modal header-->
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><i class="pci-cross pci-circle"></i></button>
+                    <h4 class="modal-title">@ViewBag.Element</h4>
+                </div>
+
+                <!--Modal body-->
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Bệnh nhân</label>
+                        <div class="col-lg-7 input-group mar-btm">
+                            @Html.DropDownList("PatientId", (SelectList)ViewBag.Patients,
+                                new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Phòng khám</label>
+                        <div class="col-lg-7 input-group mar-btm">
+                            @Html.DropDownList("RoomId", (SelectList)ViewBag.Rooms,
+                                new { @class = "form-control", @required = "required" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Ngày đăng ký</label>
+                        <div class="col-lg-7">
+                            <input type="date" class="form-control" name="StartTime" placeholder="" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-lg-3 control-label">Số</label>
+                        <div class="col-lg-7">
+                            <input type="text" class="form-control" name="Number" placeholder="" required>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal footer-->
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Đóng</button>
+                    <button class="btn btn-success" type="submit">Lưu</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Script-->
+@section Scripts {
+    <!--DataTables [ OPTIONAL ]-->
+    <script src="/Areas/Admin/Content/plugins/datatables/media/js/jquery.dataTables.js"></script>
+    <script src="/Areas/Admin/Content/plugins/datatables/media/js/dataTables.bootstrap.js"></script>
+    <script src="/Areas/Admin/Content/plugins/datatables/extensions/Responsive/js/dataTables.responsive.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#tblData').dataTable({
+                "language": {
+                    "paginate": {
+                        "previous": '<i class="demo-psi-arrow-left"></i>',
+                        "next": '<i class="demo-psi-arrow-right"></i>'
+                    },
+                    "search": "Tìm kiếm:",
+                    "emptyTable": "Dữ liệu trống",
+                    "zeroRecords": "Không tìm thấy bản nghi nào",
+                    "decimal": "",
+                    "info": "Hiển thị _START_ đến _END_ của _TOTAL_ bản ghi",
+                    "infoEmpty": "Hiển thị 0 đến 0 của 0 bản ghi",
+                    "infoFiltered": "(filtered from _MAX_ total entries)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Hiển thị _MENU_ bản ghi",
+                    "loadingRecords": "Đang tải...",
+                    "processing": "Đang xử lý...",
+                    "aria": {
+                        "sortAscending": ": Kích hoạt để sắp xếp cột tăng",
+                        "sortDescending": ": Kích hoạt để sắp xếp cột giảm"
+                    }
+                }
+
+            });
+        });
+        const baseUrl = "/admin/patientregister";
+        // Valid
+        const fields = {
+            Name: {
+                container: 'tooltip',
+                validators: {
+                    notEmpty: {
+                        message: 'Tên không được để trống!'
+                    }
+                }
+            }
+
+        }
+
+        validator.valid('modal-form',
+            fields,
+            (e) => {
+                e.preventDefault();
+
+                var formData = new FormData(document.getElementById('modal-form'));
+
+                ajax.createOrUpdate(`${baseUrl}/CreateOrEdit`,
+                    formData,
+                    (response) => {
+                        if (response.status) {
+                            notify.push(response.mess, notify.EType.SUCCESS);
+                            notify.loading();
+                            $('#data-modal').modal('hide');
+                            setTimeout(function () {
+                                window.location.href = window.location.pathname;
+                            }, 1000);
+
+                        } else {
+                            notify.push(response.mess, notify.EType.DANGER);
+                            $(':input[type="submit"]').prop("disabled", false);
+                        }
+                    },
+                    (jqXhr, textStatus) => {
+                        const mess = `Request failed: ${textStatus}`;
+                        notify.push(mess, notify.EType.DANGER);
+                        $(':input[type="submit"]').prop("disabled", false);
+                    }
+                );
+            });
+
+
+        function changeRoom(e) {
+
+            var formData = new FormData(document.getElementById('change-room-modal-form'));
+
+            ajax.createOrUpdate(`${baseUrl}/changeRoom`,
+                formData,
+                (response) => {
+                    if (response.status) {
+                        notify.push(response.mess, notify.EType.SUCCESS);
+                        notify.loading();
+                        $('#change-room-modal').modal('hide');
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+
+                    } else {
+                        notify.push(response.mess, notify.EType.DANGER);
+                        $('#change-room-modal :input[type="submit"]').prop("disabled", false);
+                    }
+                },
+                (jqXhr, textStatus) => {
+                    const mess = `Request failed: ${textStatus}`;
+                    notify.push(mess, notify.EType.DANGER);
+                    $('#change-room-modal :input[type="submit"]').prop("disabled", false);
+                }
+            );
+        }
+
+        // ChangeRoom
+        function openModalChangeRoom(isEdit, id, changeRoomId) {
+            $('#change-room-modal-form')[0].reset();
+
+            ajax.get(`${baseUrl}/GetJson`,
+                { id: id },
+                (response) => {
+                    if (response.status) {
+                        const obj = response.data;
+
+                        $('#modal-form input[name="StartTime"').val(obj.StartTime);
+                        $("#change-room-modal-form #RoomId").val(changeRoomId);
+                        //$('#FacultyId').select2().trigger('change');
+
+                        $('#change-room-modal-form input[name="Id"]').val(obj.Id);
+                        $('#change-room-modal-form input[name="isEdit"]').val(true);
+                        $('#change-room-modal').modal('show');
+                    } else {
+                        notify.push(response.mess, notify.EType.DANGER);
+                    }
+                },
+                (jqXhr, textStatus) => {
+                    const mess = `Request failed: ${textStatus}`;
+                    notify.push(mess, notify.EType.DANGER);
+
+                }
+            );
+        }
+
+        //Edit
+        function openModal(isEdit, id) {
+            $('#modal-form')[0].reset();
+            if (!isEdit) {
+                $('#modal-form input[name="isEdit"]').val(false);
+                $('#modal-form input[name="Id"]').val("");
+                $('#data-modal').modal('show');
+                return;
+            }
+
+            ajax.get(`${baseUrl}/GetJson`,
+                { id: id },
+                (response) => {
+                    if (response.status) {
+                        const obj = response.data;
+                        $('#modal-form input[name="Number"]').val(obj.Number);
+
+                        $('#modal-form input[name="StartTime"').val(obj.StartTime);
+
+                        $("#modal-form #PatientId").val(obj.PatientId);
+                        //$('#DoctorId').select2().trigger('change');
+
+
+                        $("#modal-form #RoomId").val(obj.RoomId);
+                        //$('#FacultyId').select2().trigger('change');
+
+                        $('#modal-form input[name="Id"]').val(obj.Id);
+                        $('#modal-form input[name="isEdit"]').val(true);
+                        $('#data-modal').modal('show');
+                    } else {
+                        notify.push(response.mess, notify.EType.DANGER);
+                    }
+                },
+                (jqXhr, textStatus) => {
+                    const mess = `Request failed: ${textStatus}`;
+                    notify.push(mess, notify.EType.DANGER);
+
+                }
+            );
+        }
+
+        //Del
+        function deleteElement(_id, name) {
+            var mess = `Xác nhận <b>xóa</b> bản ghi <b>${name}</b>`;
+            bootbox.confirm(mess,
+                function (result) {
+                    if (result) {
+                        ajax.del(`${baseUrl}/del`,
+                            { id: _id },
+                            (response) => {
+                                if (response.status) {
+                                    notify.push(response.mess, notify.EType.SUCCESS);
+                                    $(`#row_${_id}`).remove();
+                                } else {
+                                    notify.push(mess, notify.EType.DANGER);
+                                }
+                            },
+                            (jqXhr, textStatus) => {
+                                const mess = `Request failed: ${textStatus}`;
+                                notify.push(mess, notify.EType.DANGER);
+
+                            }
+                        );
+                    }
+                });
+        }
+    </script>
+}
