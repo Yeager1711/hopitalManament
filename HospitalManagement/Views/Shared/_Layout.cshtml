@@ -57,6 +57,16 @@
             border: 2px solid #03a9f4;
             display: none;
         }
+        select#medical-description {
+            width: 100%;
+            padding: .8rem;
+        }
+
+        .amount {
+            border: .1rem solid #dbdbdb;
+            padding: .3rem 1rem;
+        }
+
     </style>
 </head>
 <body>
@@ -132,27 +142,32 @@
                     <form id="form-pick-number">
                         <div class="form-group">
                             <label class="col-form-label">Thời gian:</label>
-                            <input class="form-control" name="StartTime" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" data-original-title="" title="">
+                            <input readonly class="form-control" name="StartTime" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" data-original-title="" title="">
+                        </div>
+
+                        <div class="form-group amount">
+                            <label class="col-form-label">Số hiện tại</label>
+                            <label class="col-form-label">0</label>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label">Mô tả bệnh án</label>
-                            <textarea class="form-control" name="descriptionSick" id="description_sick" rows="4" placeholder="Nhập mô tả bệnh án..."></textarea>
+                            <label for="medical-description" class="form-label">Triệu chứng bệnh:</label>
+                            <select class="form-select" id="medical-description" aria-label="Mô tả bệnh án">
+                                <option value="value1">Mô tả 1</option>
+                                <option value="value2">Mô tả 2</option>
+                                <option value="value3">Mô tả 3</option>
+                                <option value="value4">Mô tả 4</option>
+                            </select>
                         </div>
 
 
-                        <div class="form-group">
-                            <label class="col-form-label">Khoa khám:</label>
-                            <input type="text" class="form-control" id="department" readonly placeholder="Chưa xác định">
-                        </div>
-
-                        <div class="form-group">
+                        @*<div class="form-group">
                             <label class="control-label">Phòng khám</label>
                             <div class="input-group mar-btm">
                                 @Html.DropDownList("RoomId", (SelectList)ViewBag.GlobalRooms,
                                     new { @class = "form-control", @required = "required" })
                             </div>
-                        </div>
+                        </div>*@
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -316,14 +331,6 @@
             $("#department").val(recommendedDepartment);
         }
 
-        // Gọi hàm suggestDepartment mỗi khi người dùng thay đổi mô tả bệnh án
-        $("#description_sick").on("input", function () {
-            suggestDepartment();
-        });
-
-
-   
-
         function pickNumber() {
             $('#pickNumber').modal('show');
         }
@@ -331,19 +338,12 @@
         function savePickNumber() {
             $("#savePickNumber").prop('disabled', true);
 
-            var descriptionSick = $("#description_sick").val().trim();
             var selectedRoom = $("#RoomId").val();
 
             // Validation checks
             var errors = [];
-            if (descriptionSick === "") {
-                errors.push("Vui lòng nhập mô tả bệnh án.");
-            }
             if (!selectedRoom) {
                 errors.push("Vui lòng chọn phòng khám.");
-            }
-            if (descriptionSick.length < 5) {
-                errors.push("Mô tả bệnh án quá ngắn. Vui lòng cung cấp thêm chi tiết.");
             }
 
             // Display multiple errors if any
@@ -357,7 +357,6 @@
             }
 
             var formData = new FormData(document.getElementById('form-pick-number'));
-            formData.append("descriptionSick", descriptionSick);
 
             ajax.createOrUpdate(`/register/pick`,
                 formData,
