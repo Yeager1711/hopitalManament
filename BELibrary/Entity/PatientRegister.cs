@@ -11,6 +11,8 @@ namespace BELibrary.Entity
     [Table("PatientRegister")]
     public class PatientRegister
     {
+        public int maxCapacityPerRoom;
+
         public PatientRegister()
         {
             PickTime = DateTime.Now;

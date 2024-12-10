@@ -108,6 +108,7 @@ namespace HospitalManagement.Controllers
                     PatientId = user.PatientId.GetValueOrDefault(),
                     StartTime = startTime,
                     Number = requestNumber
+
                 };
 
                 workScope.PatientRegisters.Add(register);
@@ -120,10 +121,11 @@ namespace HospitalManagement.Controllers
                         register.Number,
                         room.Description,
                         register.StartTime.Value.ToString("dd/MM/yyyy HH:mm")),
-                    nextNumber = requestNumber + 1 // Cập nhật số thứ tự tiếp theo
+                        nextNumber = requestNumber + 1
                 });
             }
         }
+
 
 
         [HttpPost]

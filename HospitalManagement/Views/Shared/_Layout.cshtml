@@ -165,7 +165,7 @@
 
                         <div class="form-group amount">
                             <label class="col-form-label">Số hiện tại:</label>
-                            <label class="col-form-label next-number"></label>
+                            <label class="col-form-label next-number" id="nextNumberLabel"></label>
                         </div>
 
 
@@ -288,20 +288,13 @@
         }
 
         function pickNumber() {
+  
             $('#pickNumber').modal('show');
         }
 
-        var currentNumber = $('.next-number').text().trim();
-        if (!currentNumber || currentNumber === "") {
-            // Nếu không có số, hiển thị số 1
-            $('.next-number').text('1');
-        }
 
         function savePickNumber() {
             $("#savePickNumber").prop('disabled', true);
-
-            // Kiểm tra nếu chưa có số nào được bốc
-           
 
             // Validation checks
             var errors = [];
@@ -320,6 +313,9 @@
 
             ajax.createOrUpdate(`/register/pick`, formData, (response) => {
                 if (response.status) {
+                    // Save nextNumber to session storage
+                    localStorage.setItem('nextNumber', response.nextNumber);
+
                     Lobibox.alert("success", {
                         msg: response.mess,
                         callback: function () {
@@ -342,6 +338,17 @@
                 $("#savePickNumber").prop('disabled', false);
             });
         }
+
+        // When the page loads, set the next number from sessionStorage to the label
+        $(document).ready(function () {
+            var nextNumber = localStorage.getItem('nextNumber');
+            if (nextNumber) {
+                $('#nextNumberLabel').text(nextNumber); // Update the label with the next number
+            } else {
+                $('#nextNumberLabel').text('Chưa có số'); // Display a default message if no number is found
+            }
+        });
+
 
     </script>
 </body>
