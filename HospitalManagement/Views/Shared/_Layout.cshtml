@@ -63,9 +63,13 @@
         }
 
         .amount {
-            border: .1rem solid #dbdbdb;
-            padding: .3rem 1rem;
-            border-radius: .3rem;
+            display: flex;
+        }
+
+        .amount label{
+           margin: auto;
+           font-size: 5rem;
+
         }
 
         .checkbox__re-examination {
@@ -164,7 +168,7 @@
                         </div>
 
                         <div class="form-group amount">
-                            <label class="col-form-label">Số hiện tại:</label>
+                            
                             <label class="col-form-label next-number" id="nextNumberLabel"></label>
                         </div>
 
@@ -345,7 +349,7 @@
             if (nextNumber) {
                 $('#nextNumberLabel').text(nextNumber); // Update the label with the next number
             } else {
-                $('#nextNumberLabel').text('Chưa có số'); // Display a default message if no number is found
+                $('#nextNumberLabel').text(''); // Display a default message if no number is found
             }
         });
 
