@@ -142,14 +142,14 @@ namespace HospitalManagement.Controllers
                 return Json(new { status = false, mess = "Vui lòng đăng nhập" });
             }
 
-            if (time.TimeOfDay < new TimeSpan(6, 30, 0) || time.TimeOfDay > new TimeSpan(17, 30, 0))
-            {
-                return Json(new
-                {
-                    status = false,
-                    mess = "Chỉ được phép đặt lịch khám trong giờ làm việc từ 6h30 sáng đến 5h30 chiều !"
-                });
-            } 
+            //if (time.TimeOfDay < new TimeSpan(6, 30, 0) || time.TimeOfDay > new TimeSpan(17, 30, 0))
+            //{
+            //    return Json(new
+            //    {
+            //        status = false,
+            //        mess = "Chỉ được phép đặt lịch khám trong giờ làm việc từ 6h30 sáng đến 5h30 chiều !"
+            //    });
+            //} 
 
             if (time.DayOfWeek == DayOfWeek.Saturday)
             {

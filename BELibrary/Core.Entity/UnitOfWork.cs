@@ -56,6 +56,12 @@ namespace BELibrary.Core.Entity
         public IArticleRepository Articles { get; private set; }
         public IRoomRepository Rooms { get; }
         public IPatientRegisterRepository PatientRegisters { get; }
+
+        //public ISymptonsRepository Symptons { get; private set; }
+
+
+        //mới IDetailsFacultySymptonsRepository
+        //public IDetailsFacultySymptonsRepository DetailsFacultySymptons { get; private set; }
         public object Queues { get; set; }
 
         public int Complete()

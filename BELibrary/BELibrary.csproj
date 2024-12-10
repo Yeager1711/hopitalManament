@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core.Entity\IUnitOfWork.cs" />
+    <Compile Include="Core.Entity\Repositories\ISymptonsRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IAccountRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IArticleRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IAttachmentRepository.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Core.Entity\Repositories\IRecordRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IDoctorScheduleRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IRoomRepository.cs" />
+    <Compile Include="Core.Entity\Repositories\IDetailsFacultySymptonsRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IUserVerificationRepository.cs" />
     <Compile Include="Core.Entity\UnitOfWork.cs" />
     <Compile Include="Core.Utils\MailUtils.cs" />
@@ -122,6 +124,8 @@
     <Compile Include="Core.Utils\StringHelper.cs" />
     <Compile Include="Core.Utils\VariableExtensions.cs" />
     <Compile Include="DbContext\PatientManagementDbContext.cs" />
+    <Compile Include="Entity\DetailFacultySymptons.cs" />
+    <Compile Include="Entity\Symptons.cs" />
     <Compile Include="Entity\Account.cs" />
     <Compile Include="Entity\Attachment.cs" />
     <Compile Include="Entity\AttachmentAssign.cs" />

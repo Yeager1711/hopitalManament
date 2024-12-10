@@ -1,4 +1,4 @@
-namespace BELibrary.DbContext
+﻿namespace BELibrary.DbContext
 {
     using BELibrary.Entity;
     using System.Data.Entity;
@@ -49,6 +49,12 @@ namespace BELibrary.DbContext
         public virtual DbSet<Article> Articles { get; set; }
         public virtual DbSet<Room> Rooms { get; set; }
         public virtual DbSet<PatientRegister> PatientRegisters { get; set; }
+
+        //public DbSet<Symptons> Symptoms { get; set; }
+
+
+        //Mới:  public DbSet<DetailsFacultySymptons> DetailsFacultySymptons { get; set; }
+        //public DbSet<DetailsFacultySymptons> DetailsFacultySymptons { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

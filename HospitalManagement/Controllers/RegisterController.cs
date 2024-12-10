@@ -15,7 +15,7 @@ namespace HospitalManagement.Controllers
     {
         // GET: Register
         [HttpPost, ValidateInput(false)]
-        public JsonResult pick(DateTime startTime, bool isRevisit)  // Thêm tham số isRevisit
+        public JsonResult pick(DateTime startTime, bool isRevisit) 
         {
             var user = CookiesManage.GetUser();
 
@@ -25,7 +25,7 @@ namespace HospitalManagement.Controllers
             }
 
             if (startTime.TimeOfDay < new TimeSpan(6, 30, 0)
-                || startTime.TimeOfDay > new TimeSpan(17, 30, 0))
+                || startTime.TimeOfDay > new TimeSpan(23, 59, 0))
             {
                 return Json(new
                 {
@@ -65,6 +65,16 @@ namespace HospitalManagement.Controllers
 
                 // Lấy danh sách tất cả các phòng
                 var roomsInFaculties = workScope.Rooms.GetAll().ToList();
+
+                //var roomsWithFacultyName = workScope.Rooms
+                //.Include(r => r.Faculty)
+                //.Select(r => new
+                //{
+                //    RoomId = r.Id,
+                //    RoomDescription = r.Description,
+                //    FacultyName = r.Faculty.Name
+                //})
+                //.ToList();
 
                 // Lấy danh sách bệnh nhân đã đăng ký trong ngày
                 var patientRegisterAtDate = workScope.PatientRegisters
@@ -132,9 +142,6 @@ namespace HospitalManagement.Controllers
                 });
             }
         }
-
-
-
 
         [HttpPost]
         public JsonResult Del(int id)
