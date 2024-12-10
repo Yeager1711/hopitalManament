@@ -3431,6 +3431,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="FileUploads\flash\" />
+    <Folder Include="Views\Queue\" />
     <Folder Include="Views\Register\" />
   </ItemGroup>
   <ItemGroup>

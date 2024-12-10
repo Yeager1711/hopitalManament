@@ -160,13 +160,14 @@
 
                         <div class="form-group checkbox__re-examination">
                             <label class="col-form-label">Tái khám: </label>
-                            <input type="checkbox" name="name" value=""  style="width: 1rem; height: 1rem"/>
+                            <input type="checkbox" name="name" value="" style="width: 1rem; height: 1rem" />
                         </div>
 
                         <div class="form-group amount">
-                            <label class="col-form-label">Số hiện tại</label>
-                            <label class="col-form-label">0</label>
+                            <label class="col-form-label">Số hiện tại:</label>
+                            <label class="col-form-label next-number"></label>
                         </div>
+
 
                         <div class="form-group">
                             <label for="medical-description" class="form-label">Triệu chứng bệnh:</label>
@@ -257,6 +258,8 @@
 
         function saveBooking() {
             $("#saveBooking").prop('disabled', true);
+
+
             var formData = new FormData(document.getElementById('form-book-doctor'));
             ajax.createOrUpdate(`/doctor/book`,
                 formData,
@@ -284,77 +287,24 @@
             );
         }
 
-        function suggestDepartment() {
-            var descriptionSick = $("#description_sick").val().toLowerCase(); // Lấy mô tả bệnh án và chuyển thành chữ thường
-
-            // Một danh sách các khoa khám có sẵn, bạn có thể thay thế danh sách này bằng dữ liệu từ cơ sở dữ liệu nếu cần
-            var departments = [
-                { name: "Khoa Nội", keywords: ["đau bụng", "tiêu chảy", "nôn mửa"] },
-                { name: "Khoa Ngoại", keywords: ["vết thương", "gãy xương", "bỏng"] },
-                { name: "Khoa Tim Mạch", keywords: ["đau ngực", "tim đập nhanh", "khó thở"] },
-                { name: "Khoa Hô Hấp", keywords: ["sốt", "ho", "khó thở"] }
-            ];
-
-            var recommendedDepartment = "Chưa xác định"; // Mặc định là chưa xác định
-
-            // Kiểm tra xem mô tả bệnh án có chứa các từ khóa của khoa khám nào không
-            departments.forEach(function (department) {
-                department.keywords.forEach(function (keyword) {
-                    if (descriptionSick.includes(keyword)) {
-                        recommendedDepartment = department.name;
-                    }
-                });
-            });
-
-            // Cập nhật trường "Khoa khám" với khoa gợi ý
-            $("#department").val(recommendedDepartment);
-        }
-
-        // Gọi hàm suggestDepartment mỗi khi người dùng thay đổi mô tả bệnh án
-        $("#description_sick").on("input", function () {
-            suggestDepartment();
-        });
-
-        function suggestDepartment() {
-            var descriptionSick = $("#description_sick").val().toLowerCase(); // Lấy mô tả bệnh án và chuyển thành chữ thường
-
-            // Một danh sách các khoa khám có sẵn, bạn có thể thay thế danh sách này bằng dữ liệu từ cơ sở dữ liệu nếu cần
-            var departments = [
-                { name: "Khoa Nội", keywords: ["đau bụng", "tiêu chảy", "nôn mửa"] },
-                { name: "Khoa Ngoại", keywords: ["vết thương", "gãy xương", "bỏng"] },
-                { name: "Khoa Tim Mạch", keywords: ["đau ngực", "tim đập nhanh", "khó thở"] },
-                { name: "Khoa Nhi", keywords: ["sốt", "ho", "khó thở"] }
-            ];
-
-            var recommendedDepartment = "Chưa xác định"; // Mặc định là chưa xác định
-
-            // Kiểm tra xem mô tả bệnh án có chứa các từ khóa của khoa khám nào không
-            departments.forEach(function (department) {
-                department.keywords.forEach(function (keyword) {
-                    if (descriptionSick.includes(keyword)) {
-                        recommendedDepartment = department.name;
-                    }
-                });
-            });
-
-            // Cập nhật trường "Khoa khám" với khoa gợi ý
-            $("#department").val(recommendedDepartment);
-        }
-
         function pickNumber() {
             $('#pickNumber').modal('show');
+        }
+
+        var currentNumber = $('.next-number').text().trim();
+        if (!currentNumber || currentNumber === "") {
+            // Nếu không có số, hiển thị số 1
+            $('.next-number').text('1');
         }
 
         function savePickNumber() {
             $("#savePickNumber").prop('disabled', true);
 
-            var selectedRoom = $("#RoomId").val();
+            // Kiểm tra nếu chưa có số nào được bốc
+           
 
             // Validation checks
             var errors = [];
-            if (!selectedRoom) {
-                errors.push("Vui lòng chọn phòng khám.");
-            }
 
             // Display multiple errors if any
             if (errors.length > 0) {
@@ -368,33 +318,30 @@
 
             var formData = new FormData(document.getElementById('form-pick-number'));
 
-            ajax.createOrUpdate(`/register/pick`,
-                formData,
-                (response) => {
-                    if (response.status) {
-                        Lobibox.alert("success", {
-                            msg: response.mess,
-                            callback: function () {
-                                $('#pickNumber').modal('hide');
-                                // Optional: Clear form or do something after successful pick
-                                $("#description_sick").val('');
-                            }
-                        });
-                    } else {
-                        Lobibox.alert("error", {
-                            msg: response.mess
-                        });
-                    }
-
-                    $("#savePickNumber").prop('disabled', false);
-                },
-                (jqXhr, textStatus) => {
-                    Lobibox.alert("error", {
-                        msg: "Có lỗi xảy ra. Vui lòng thử lại sau."
+            ajax.createOrUpdate(`/register/pick`, formData, (response) => {
+                if (response.status) {
+                    Lobibox.alert("success", {
+                        msg: response.mess,
+                        callback: function () {
+                            // Cập nhật số mới sau khi bốc
+                            $('.next-number').html(response.nextNumber);
+                            $('#pickNumber').modal('hide');
+                        }
                     });
-                    $("#savePickNumber").prop('disabled', false);
+                } else {
+                    Lobibox.alert("error", {
+                        msg: response.mess
+                    });
                 }
-            );
+
+                $("#savePickNumber").prop('disabled', false);
+            }, (jqXhr, textStatus) => {
+                Lobibox.alert("error", {
+                    msg: "Có lỗi xảy ra. Vui lòng thử lại sau."
+                });
+                $("#savePickNumber").prop('disabled', false);
+            });
         }
+
     </script>
 </body>
