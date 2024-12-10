@@ -40,5 +40,7 @@ namespace BELibrary.Entity
 
         [ForeignKey(nameof(PatientId))]
         public virtual Patient Patient { get; set; }
+
+        //public bool IsRevisit { get; set; }
     }
 }

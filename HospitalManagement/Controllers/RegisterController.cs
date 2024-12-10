@@ -15,7 +15,7 @@ namespace HospitalManagement.Controllers
     {
         // GET: Register
         [HttpPost, ValidateInput(false)]
-        public JsonResult pick(DateTime startTime)
+        public JsonResult pick(DateTime startTime, bool isRevisit)  // Thêm tham số isRevisit
         {
             var user = CookiesManage.GetUser();
 
@@ -107,24 +107,32 @@ namespace HospitalManagement.Controllers
                     RoomId = room.Id,
                     PatientId = user.PatientId.GetValueOrDefault(),
                     StartTime = startTime,
-                    Number = requestNumber
-
+                    Number = requestNumber,
+                    //IsRevisit = isRevisit
                 };
 
                 workScope.PatientRegisters.Add(register);
                 workScope.Complete();
 
+                string message = string.Format("Bạn đã lấy được số thứ tự <b>{0}</b>, khám tại phòng <b>{1}</b>, thời gian {2}",
+                    register.Number,
+                    room.Description,
+                    register.StartTime.Value.ToString("dd/MM/yyyy HH:mm"));
+
+                if (isRevisit)  
+                {
+                    message += ", Hình thức: Tái khám";
+                }
+
                 return Json(new
                 {
                     status = true,
-                    mess = string.Format("Bạn đã lấy được số thứ tự <b>{0}</b>, khám tại phòng <b>{1}</b>, thời gian {2}",
-                        register.Number,
-                        room.Description,
-                        register.StartTime.Value.ToString("dd/MM/yyyy HH:mm")),
-                        nextNumber = requestNumber + 1
+                    mess = message,
+                    nextNumber = requestNumber + 1
                 });
             }
         }
+
 
 
 
