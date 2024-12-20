@@ -56,7 +56,10 @@ namespace HospitalManagement.Controllers
                 });
             }
 
-            using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
+            Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
+            Dictionary<int, List<string>> lstSymptoms = new Dictionary<int, List<string>>();
+
+            using (var workScope = new UnitOfWork(new HospitalManagementDbContext(lstSymtompsFaculty, lstSymptoms)))
             {
                 int requestNumber = 1;
                 Room room = null;
