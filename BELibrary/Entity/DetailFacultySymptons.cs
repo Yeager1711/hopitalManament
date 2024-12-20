@@ -11,15 +11,15 @@
 //        public Guid Id { get; set; }
 
 //        [Required]
-//        public Guid SymptonsId { get; set; } //Triệu chứng
+//        public Guid SymptonsId { get; set; } // Id của triệu chứng
 
 //        [Required]
-//        public Guid FacultyId { get; set; } //Khoa khám bệnh
+//        public Guid FacultyId { get; set; } // Id của khoa khám
 
 //        [ForeignKey("SymptonsId")]
-//        public virtual Symptons Symptons { get; set; } 
+//        public virtual Symptons Symptons { get; set; } // Liên kết tới Symptoms
 
 //        [ForeignKey("FacultyId")]
-//        public virtual Faculty Faculty { get; set; } 
+//        public virtual Faculty Faculty { get; set; } // Liên kết tới Faculty
 //    }
 //}
