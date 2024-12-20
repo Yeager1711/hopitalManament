@@ -16,7 +16,7 @@ namespace HospitalManagement.Controllers
 
         // GET: Register
         [HttpPost, ValidateInput(false)]
-        public JsonResult pick(DateTime startTime, bool isRevisit) 
+        public JsonResult pick(DateTime startTime, bool isRevisit, string symptoms)
         {
             var user = CookiesManage.GetUser();
 
@@ -57,11 +57,25 @@ namespace HospitalManagement.Controllers
             }
 
             Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
-            Dictionary<int, List<string>> lstSymptoms = new Dictionary<int, List<string>>();
+            List<string> lstSymptoms = new List<string>();
 
             using (var workScope = new UnitOfWork(new HospitalManagementDbContext(lstSymtompsFaculty, lstSymptoms)))
             {
                 int requestNumber = 1;
+                // Get Faculty base on Symptoms
+                string faculty = "";
+                foreach (var entry in lstSymtompsFaculty)
+                {
+                    if (entry.Value.Contains(symptoms))
+                    {
+                        faculty = entry.Key;
+                    }
+                }
+                Faculty requestFaculty = workScope.Faculties.GetAll().Where(x => x.Name == faculty).FirstOrDefault();
+
+
+
+                // Room 
                 Room room = null;
 
                 // Giới hạn tối đa số lượt khám cho mỗi phòng
@@ -70,15 +84,15 @@ namespace HospitalManagement.Controllers
                 // Lấy danh sách tất cả các phòng
                 var roomsInFaculties = workScope.Rooms.GetAll().ToList();
 
-                //var roomsWithFacultyName = workScope.Rooms
-                //.Include(r => r.Faculty)
-                //.Select(r => new
-                //{
-                //    RoomId = r.Id,
-                //    RoomDescription = r.Description,
-                //    FacultyName = r.Faculty.Name
-                //})
-                //.ToList();
+                var roomsWithFacultyName = workScope.Rooms
+                    .Include(r => r.Faculty)
+                    .Select(r => new
+                    {
+                        RoomId = r.Id,
+                        RoomDescription = r.Description,
+                        FacultyName = r.Faculty.Name
+                    })
+                    .ToList();
 
                 // Lấy danh sách bệnh nhân đã đăng ký trong ngày
                 var patientRegisterAtDate = workScope.PatientRegisters
