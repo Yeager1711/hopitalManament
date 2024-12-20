@@ -5,6 +5,6 @@
 //    //this.Configuration.LazyLoadingEnabled = false;
 //    public interface ISymptonsRepository : IRepository<Symptons>
 //    {
-     
+
 //    }
 //}

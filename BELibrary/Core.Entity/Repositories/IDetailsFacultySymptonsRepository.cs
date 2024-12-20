@@ -4,6 +4,6 @@
 //{
 //    public interface IDetailsFacultySymptonsRepository : IRepository<DetailsFacultySymptons>
 //    {
-        
+
 //    }
 //}
