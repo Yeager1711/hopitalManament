@@ -55,7 +55,7 @@ namespace HospitalManagement.Controllers
                     mess = "Ngày chủ nhật phòng khám không làm việc ! Vui lòng đặt lịch vào thời gian làm việc trong tuần từ thứ 2 -> thứ 7 !"
                 });
             }
-
+            
             using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
             {
                 int requestNumber = 1;
