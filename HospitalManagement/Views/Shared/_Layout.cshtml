@@ -1,8 +1,10 @@
 ﻿@{
+    Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
+    Dictionary<int, List<string>> lstSymptoms = new Dictionary<int, List<string>>();
     // Truyền data ra ngoài layout
     List<BELibrary.Entity.Room> rooms = new List<BELibrary.Entity.Room>();
 
-    using (var workScope = new BELibrary.Core.Entity.UnitOfWork(new BELibrary.DbContext.HospitalManagementDbContext()))
+    using (var workScope = new BELibrary.Core.Entity.UnitOfWork(new BELibrary.DbContext.HospitalManagementDbContext(lstSymtompsFaculty, lstSymptoms)))
     {
         rooms = workScope.Rooms.GetAll()
             .ToList();
@@ -10,7 +12,7 @@
 
     ViewBag.GlobalRooms = new SelectList(rooms, "Id", "Description");
 
-
+    ViewBag.LstSymptoms = new SelectList(lstSymtompsFaculty);
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -176,12 +178,18 @@
                         <div class="form-group">
                             <label for="medical-description" class="form-label">Triệu chứng bệnh:</label>
                             <select class="form-select" id="medical-description" aria-label="Mô tả bệnh án">
-                                <option value="value1">Mô tả 1</option>
-                                <option value="value2">Mô tả 2</option>
-                                <option value="value3">Mô tả 3</option>
-                                <option value="value4">Mô tả 4</option>
+                                @foreach (var symptom in ViewBag.LstSymptoms)
+                                {
+                                    <optgroup label="@symptom.Key">
+                                        @foreach (var symptomName in symptom.Value)
+                                        {
+                                            <option value="@symptomName">@symptomName</option>
+                                        }
+                                    </optgroup>
+                                }
                             </select>
                         </div>
+
 
                     </form>
                 </div>
