@@ -13,6 +13,7 @@ namespace HospitalManagement.Controllers
 {
     public class RegisterController : BaseController
     {
+
         // GET: Register
         [HttpPost, ValidateInput(false)]
         public JsonResult pick(DateTime startTime, bool isRevisit) 
