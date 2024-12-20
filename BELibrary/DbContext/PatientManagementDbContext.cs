@@ -31,12 +31,14 @@ namespace BELibrary.DbContext
                 { "Khoa Cơ xương khớp", new List<string> { "Đau nhức khớp, cứng khớp buổi sáng.", "Biến dạng khớp, hạn chế vận động.", "Đau lưng, đau cổ kéo dài." } },
                 { "Khoa Bệnh lý mạch máu não", new List<string> { "Đau đầu dữ dội, mất thăng bằng.", "Mờ mắt, tê liệt nửa người.", "Nói khó, lơ mơ, hôn mê." } },
                 { "Khoa Tai mũi họng", new List<string> { "Đau họng, khó nuốt, khản tiếng.", "Ngứa mũi, nghẹt mũi, chảy mũi.", "Đau tai, ù tai, chảy mủ tai." } },
-                { "Khoa Dược", new List<string> { "Hướng dẫn và giải quyết tác dụng phụ thuốc." } },
                 { "Khoa Hô hấp", new List<string> { "Khó thở, ho kéo dài, đau ngực.", "Ho ra máu, thở khò khè.", "Sốt kèm ho có đờm." } },
                 { "Khoa Nội Thần kinh tổng quát", new List<string> { "Đau đầu, mất ngủ.", "Chóng mặt, mất trí nhớ.", "Tê bì tay chân, co giật." } },
-                { "Khoa Ung bướu và Y học hạt nhân", new List<string> { "U cục bất thường, đau không rõ nguyên nhân.", "Sụt cân, mệt mỏi kéo dài.", "Triệu chứng sau xạ trị hoặc hóa trị." } }
+               
             };
+
         }
+
+
 
         public virtual DbSet<Account> Accounts { get; set; }
 
