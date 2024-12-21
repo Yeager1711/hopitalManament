@@ -16,7 +16,8 @@ namespace HospitalManagement.Controllers
 
         // GET: Register
         [HttpPost, ValidateInput(false)]
-        public JsonResult pick(DateTime startTime, bool isRevisit) 
+
+        public JsonResult pick(DateTime startTime, bool isRevisit, string symptoms)
         {
             var user = CookiesManage.GetUser();
 
@@ -55,10 +56,28 @@ namespace HospitalManagement.Controllers
                     mess = "Ngày chủ nhật phòng khám không làm việc ! Vui lòng đặt lịch vào thời gian làm việc trong tuần từ thứ 2 -> thứ 7 !"
                 });
             }
-            
-            using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
+
+
+            Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
+            List<string> lstSymptoms = new List<string>();
+
+            using (var workScope = new UnitOfWork(new HospitalManagementDbContext(lstSymtompsFaculty, lstSymptoms)))
             {
                 int requestNumber = 1;
+                // Get Faculty base on Symptoms
+                string faculty = "";
+                foreach (var entry in lstSymtompsFaculty)
+                {
+                    if (entry.Value.Contains(symptoms))
+                    {
+                        faculty = entry.Key;
+                    }
+                }
+                Faculty requestFaculty = workScope.Faculties.GetAll().Where(x => x.Name == faculty).FirstOrDefault();
+
+
+
+                // Room 
                 Room room = null;
 
                 // Giới hạn tối đa số lượt khám cho mỗi phòng
@@ -67,15 +86,17 @@ namespace HospitalManagement.Controllers
                 // Lấy danh sách tất cả các phòng
                 var roomsInFaculties = workScope.Rooms.GetAll().ToList();
 
-                //var roomsWithFacultyName = workScope.Rooms
-                //.Include(r => r.Faculty)
-                //.Select(r => new
-                //{
-                //    RoomId = r.Id,
-                //    RoomDescription = r.Description,
-                //    FacultyName = r.Faculty.Name
-                //})
-                //.ToList();
+                var roomsWithFacultyName = workScope.Rooms
+
+                    .Include(r => r.Faculty)
+                    .Select(r => new
+                    {
+                        RoomId = r.Id,
+                        RoomDescription = r.Description,
+                        FacultyName = r.Faculty.Name
+                    })
+                    .ToList();
+
 
                 // Lấy danh sách bệnh nhân đã đăng ký trong ngày
                 var patientRegisterAtDate = workScope.PatientRegisters
@@ -142,6 +163,54 @@ namespace HospitalManagement.Controllers
                     nextNumber = requestNumber + 1
                 });
             }
+        }
+
+        private static readonly Dictionary<string, List<string>> mapSymptompsFaculty = new Dictionary<string, List<string>>
+        {
+            { "Khoa Ngoại Chấn thương chỉnh hình", new List<string> { "Đau, sưng, biến dạng xương khớp.", "Gãy xương, trật khớp, bong gân.", "Giảm hoặc mất khả năng vận động chi." } },
+            { "Khoa Ngoại Thần kinh", new List<string> { "Đau đầu dữ dội, buồn nôn, nôn.", "Tê liệt tay chân, mất cảm giác.", "Co giật, mất ý thức đột ngột." } },
+            { "Khoa Bệnh Nhiệt đới", new List<string> { "Sốt cao, rét run.", "Phát ban, đau cơ, mệt mỏi.", "Tiêu chảy, nôn mửa, vàng da." } },
+            { "Khoa Giải phẫu bệnh", new List<string> { "Khám chẩn đoán bệnh lý qua mẫu mô.", "Kết quả xét nghiệm tế bào và mô để phát hiện ung thư hoặc bệnh lý bất thường." } },
+            { "Khoa Phẫu thuật Tim - Lồng ngực mạch máu", new List<string> { "Khó thở, đau ngực.", "Tim đập không đều, sưng chân.", "Ngất xỉu, tím tái." } },
+            { "Khoa Nội tiết", new List<string> { "Khát nước, tiểu nhiều (bệnh tiểu đường).", "Tăng cân hoặc giảm cân bất thường.", "Run tay, đổ mồ hôi nhiều (rối loạn tuyến giáp)." } },
+            { "Khoa Hồi sức Tim mạch", new List<string> { "Nhịp tim nhanh, chậm, không đều.", "Đau ngực, khó thở, phù nề.", "Ngất xỉu hoặc mất ý thức." } },
+            { "Khoa Răng Hàm Mặt - Mắt", new List<string> { "Đau răng, sưng nướu, sâu răng.", "Mờ mắt, đau mắt đỏ, khô mắt.", "Lệch khớp cắn, đau quai hàm." } },
+            { "Đơn vị Nội soi", new List<string> { "Đau bụng kéo dài, ợ nóng, khó tiêu.", "Nôn ra máu, đi ngoài phân đen.", "Khó nuốt hoặc đau họng kéo dài." } },
+            { "Khoa Nội Thận - Miễn dịch ghép", new List<string> { "Phù chân, tiểu ít, tiểu ra máu.", "Đau lưng dưới, huyết áp cao.", "Triệu chứng nhiễm trùng sau ghép thận." } },
+            { "Khoa Ngoại tổng quát", new List<string> { "Đau bụng dữ dội, sốt (viêm ruột thừa, viêm túi mật).", "U, cục bất thường ở bụng hoặc phần mềm.", "Khó tiêu, sụt cân không rõ nguyên nhân." } },
+            { "Khoa Dinh dưỡng", new List<string> { "Sụt cân hoặc tăng cân nhanh chóng.", "Chán ăn, mệt mỏi kéo dài.", "Vấn đề tiêu hóa do chế độ ăn uống." } },
+            { "Khoa Cơ xương khớp", new List<string> { "Đau nhức khớp, cứng khớp buổi sáng.", "Biến dạng khớp, hạn chế vận động.", "Đau lưng, đau cổ kéo dài." } },
+            { "Khoa Bệnh lý mạch máu não", new List<string> { "Đau đầu dữ dội, mất thăng bằng.", "Mờ mắt, tê liệt nửa người.", "Nói khó, lơ mơ, hôn mê." } },
+            { "Khoa Tai mũi họng", new List<string> { "Đau họng, khó nuốt, khản tiếng.", "Ngứa mũi, nghẹt mũi, chảy mũi.", "Đau tai, ù tai, chảy mủ tai." } },
+            { "Khoa Hô hấp", new List<string> { "Khó thở, ho kéo dài, đau ngực.", "Ho ra máu, thở khò khè.", "Sốt kèm ho có đờm." } },
+            { "Khoa Nội Thần kinh tổng quát", new List<string> { "Đau đầu, mất ngủ.", "Chóng mặt, mất trí nhớ.", "Tê bì tay chân, co giật." } },
+        };
+
+        // Returns symptoms for the faculty
+
+        public JsonResult GetAllSymptoms()
+        {
+            var allSymptoms = new List<string>();
+
+            foreach (var faculty in mapSymptompsFaculty)
+            {
+                allSymptoms.AddRange(faculty.Value);
+            }
+
+            return Json(new { status = true, symptoms = allSymptoms.Distinct() }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetFacultyBySymptom(string symptom)
+        {
+            foreach (var faculty in mapSymptompsFaculty)
+            {
+                if (faculty.Value.Contains(symptom))
+                {
+                    return Json(new { status = true, faculty = faculty.Key }, JsonRequestBehavior.AllowGet);
+                }
+            }
+
+            return Json(new { status = false, message = "Không tìm thấy khoa phù hợp" }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
