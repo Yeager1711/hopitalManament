@@ -181,11 +181,16 @@
                                 <option value="">Chọn triệu chứng</option>
                             </select>
                         </div>
+
                         <div class="form-group">
                             <label>Khoa phụ trách:</label>
                             <div id="selectedFaculty" class="form-control" readonly style="background-color: #f9f9f9;"></div>
                         </div>
 
+                        <div class="form-group">
+                            <label>Phòng khám:</label>
+                            <div id="availableRooms" class="form-control" readonly style="background-color: #f9f9f9;"></div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -385,17 +390,34 @@
 
                 if (selectedSymptom) {
                     $.ajax({
-                        url: '/register/GetFacultyBySymptom',  // Cần thêm action này trong controller
+                        url: '/register/GetFacultyBySymptom',
                         type: 'GET',
                         data: { symptom: selectedSymptom },
                         success: function (response) {
                             if (response.status) {
+                                // Hiển thị tên khoa
                                 $('#selectedFaculty').text(response.faculty);
+
+                                // Xử lý hiển thị phòng
+                                var roomsDiv = $('#availableRooms');
+                                if (response.rooms && response.rooms.length > 0) {
+                                    var roomText = "Phòng khám: ";
+                                    response.rooms.forEach(function (room, index) {
+                                        roomText += room.Description;
+                                        if (index < response.rooms.length - 1) {
+                                            roomText += ", ";
+                                        }
+                                    });
+                                    roomsDiv.html(roomText);
+                                } else {
+                                    roomsDiv.html('<span class="text-warning">Hiện chưa có phòng khám cho khoa này</span>');
+                                }
                             }
                         }
                     });
                 } else {
                     $('#selectedFaculty').text('');
+                    $('#availableRooms').text('');
                 }
             });
         });

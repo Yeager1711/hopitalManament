@@ -206,11 +206,41 @@ namespace HospitalManagement.Controllers
             {
                 if (faculty.Value.Contains(symptom))
                 {
-                    return Json(new { status = true, faculty = faculty.Key }, JsonRequestBehavior.AllowGet);
+                    using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
+                    {
+                        // Lấy thông tin faculty
+                        var facultyInfo = workScope.Faculties
+                            .GetAll()
+                            .FirstOrDefault(f => f.Name == faculty.Key);
+
+                        if (facultyInfo != null)
+                        {
+                            // Lấy danh sách phòng của khoa
+                            var rooms = workScope.Rooms
+                                .GetAll()
+                                .Where(r => r.FacultyId == facultyInfo.Id)
+                                .Select(r => new {
+                                    Id = r.Id,
+                                    Description = r.Description
+                                })
+                                .ToList();
+
+                            return Json(new
+                            {
+                                status = true,
+                                faculty = faculty.Key,
+                                rooms = rooms
+                            }, JsonRequestBehavior.AllowGet);
+                        }
+                    }
                 }
             }
 
-            return Json(new { status = false, message = "Không tìm thấy khoa phù hợp" }, JsonRequestBehavior.AllowGet);
+            return Json(new
+            {
+                status = false,
+                message = "Không tìm thấy khoa phù hợp"
+            }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
