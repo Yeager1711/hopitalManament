@@ -16,11 +16,7 @@ namespace HospitalManagement.Controllers
 
         // GET: Register
         [HttpPost, ValidateInput(false)]
-<<<<<<< HEAD
         public JsonResult pick(DateTime startTime, bool isRevisit, string symptoms)
-=======
-        public JsonResult pick(DateTime startTime, bool isRevisit, string symptons) 
->>>>>>> main
         {
             var user = CookiesManage.GetUser();
 
@@ -88,26 +84,15 @@ namespace HospitalManagement.Controllers
                 // Lấy danh sách tất cả các phòng
                 var roomsInFaculties = workScope.Rooms.GetAll().ToList();
 
-                var roomsWithFacultyName = workScope.Rooms
-<<<<<<< HEAD
-                    .Include(r => r.Faculty)
-                    .Select(r => new
-                    {
-                        RoomId = r.Id,
-                        RoomDescription = r.Description,
-                        FacultyName = r.Faculty.Name
-                    })
-                    .ToList();
-=======
-                .Include(r => r.Faculty)
-                .Select(r => new
-                {
-                    RoomId = r.Id,
-                    RoomDescription = r.Description,
-                    FacultyName = r.Faculty.Name
-                })
-                .ToList();
->>>>>>> main
+                //var roomsWithFacultyName = workScope.Rooms
+                //.Include(r => r.Faculty)
+                //.Select(r => new
+                //{
+                //    RoomId = r.Id,
+                //    RoomDescription = r.Description,
+                //    FacultyName = r.Faculty.Name
+                //})
+                //.ToList();
 
                 // Lấy danh sách bệnh nhân đã đăng ký trong ngày
                 var patientRegisterAtDate = workScope.PatientRegisters
