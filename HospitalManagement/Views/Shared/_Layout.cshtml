@@ -177,11 +177,12 @@
                         </div>
 
                         <div class="form-group examination" style="display: none">
-                            <label for="medical-description" class="form-label">Chọn khoa tái khám:</label>
-                            <select class="form-select" id="PatientFacultyDropdown" name="symptoms" aria-label="Mô tả bệnh án" style="padding: .8rem 1rem; width: 100%;">
+                            <label for="PatientFacultyDropdown" class="form-label">Chọn khoa tái khám:</label>
+                            <select class="form-select" id="PatientFacultyDropdown" name="facultyId" aria-label="Chọn khoa tái khám" style="padding: .8rem 1rem; width: 100%;">
                                 <option value="">Chọn khoa tái khám</option>
                             </select>
                         </div>
+
 
 
                         <div class="form-group">
@@ -448,37 +449,49 @@
     </script>
 
     <script>
-    $(document).ready(function () {
-        // Tất cả triệu chứng được hiển thị
-        var PatientFacultyDropdown = $('#PatientFacultyDropdown');
+        $(document).ready(function () {
+            var PatientFacultyDropdown = $('#PatientFacultyDropdown');
 
-        // Lấy tất cả triệu chứng từ tất cả các khoa
-        $.ajax({
-            url: '/register/GetPatientFaculty',  // Cần thêm action này trong controller
-            type: 'GET',
-            success: function (response) {
-                if (response.status) {
-                    // Xóa các tùy chọn cũ
-                    PatientFacultyDropdown.empty();
-                    // Thêm tùy chọn mặc định
-                    PatientFacultyDropdown.append($('<option>').text('Chọn khoa tái khám').val(''));
-
-                    // Lặp qua danh sách khoa và thêm vào dropdown
-                    response.faculties.forEach(function (faculty) {
+            $.ajax({
+                url: '/register/GetPatientFaculty',
+                type: 'GET',
+                success: function (response) {
+                    if (response.status) {
+                        PatientFacultyDropdown.empty();
                         PatientFacultyDropdown.append(
-                            $('<option>').text(faculty.Name).val(faculty.Id)
+                            $('<option>').text('Chọn khoa tái khám').val('')
                         );
-                    });
-                } else {
-                    console.error('Không lấy được dữ liệu khoa.');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Lỗi khi gọi API:', error);
-            }
-        });
-    });
-</script>
 
+                        response.faculties.forEach(function (faculty) {
+                            PatientFacultyDropdown.append(
+                                $('<option>')
+                                    .text(faculty.FacultyName)
+                                    .val(faculty.FacultyId)
+                                    .data('doctor', { id: faculty.DoctorId, name: faculty.DoctorName })
+                            );
+                        });
+                    } else {
+                        console.error('Không lấy được dữ liệu khoa.');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Lỗi khi gọi API:', error);
+                }
+            });
+
+            // Attach change event to log doctor info
+            PatientFacultyDropdown.on('change', function () {
+                var selectedOption = $(this).find(':selected');
+                var doctorData = selectedOption.data('doctor');
+
+                if (doctorData) {
+                    console.log('Selected Faculty Doctor:', doctorData);
+                } else {
+                    console.log('No doctor information available for the selected faculty.');
+                }
+            });
+        });
+
+    </script>
 
 </body>

@@ -271,23 +271,35 @@ namespace HospitalManagement.Controllers
         public JsonResult GetPatientFaculty()
         {
             var user = CookiesManage.GetUser();
-            List<PatientRecord> records = new List<PatientRecord>();
-            List<Faculty> faculties = new List<Faculty>();
+            var faculties = new List<object>();
+
             using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
             {
-                records = workScope.PatientRecords.GetAll().Where(x => x.PatientId == user.Id).ToList();
+                Guid patientId = (Guid)workScope.Accounts.GetAll().FirstOrDefault(a => a.Id == user.Id).PatientId;
+                var records = workScope.PatientRecords.GetAll().Where(x => x.PatientId == patientId).ToList();
+
                 foreach (var record in records)
                 {
-                    DetailRecord detail = workScope.DetailRecords.Get(record.Id);
-
-                    Faculty temp = workScope.Faculties.Get(detail.FacultyId);
-
-                    faculties.Add(temp);
+                    var detail = workScope.DetailRecords.GetAll().FirstOrDefault(x => x.RecordId == record.RecordId);
+                    if (detail != null)
+                    {
+                        var faculty = workScope.Faculties.Get(detail.FacultyId);
+                        var doctor = workScope.Doctors.Get(detail.DoctorId);
+                        if (faculty != null && doctor != null && !faculties.Any(f => f.Equals(faculty.Id)))
+                        {
+                            faculties.Add(new
+                            {
+                                FacultyId = faculty.Id,
+                                FacultyName = faculty.Name,
+                                DoctorId = doctor.Id,
+                                DoctorName = doctor.Name
+                            });
+                        }
+                    }
                 }
             }
 
-            return Json(new { status = true, faculties = faculties.Select(f => new { f.Id, f.Name }) }, JsonRequestBehavior.AllowGet);
-
+            return Json(new { status = true, faculties = faculties }, JsonRequestBehavior.AllowGet);
         }
 
     }
