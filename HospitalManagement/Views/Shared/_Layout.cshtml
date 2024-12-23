@@ -42,6 +42,7 @@
                 <script src="~/Content/theme/js/respond.min.js"></script>
     <![endif]-->
 
+
     <style>
 
         .Scroll-up {
@@ -60,6 +61,7 @@
             border: 2px solid #03a9f4;
             display: none;
         }
+
         select#medical-description {
             width: 100%;
             padding: .8rem;
@@ -69,11 +71,10 @@
             display: flex;
         }
 
-        .amount label{
-           margin: auto;
-           font-size: 5rem;
-
-        }
+            .amount label {
+                margin: auto;
+                font-size: 5rem;
+            }
 
         .checkbox__re-examination {
             display: flex;
@@ -83,10 +84,9 @@
             border: .1rem solid #dbdbdb;
         }
 
-        .checkbox__re-examination input:hover{
-           cursor: pointer
-        }
-
+            .checkbox__re-examination input:hover {
+                cursor: pointer
+            }
     </style>
 </head>
 <body>
@@ -358,14 +358,11 @@
                 $('#nextNumberLabel').text(''); // Display a default message if no number is found
             }
         });
-
-        
-
     </script>
 
     <script>
         $(document).ready(function () {
-            // Populate all symptoms
+            // Tất cả triệu chứng được hiển thị
             var symptomsDropdown = $('#symptomsDropdown');
 
             // Lấy tất cả triệu chứng từ tất cả các khoa
