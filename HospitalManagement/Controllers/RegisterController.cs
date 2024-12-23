@@ -268,5 +268,27 @@ namespace HospitalManagement.Controllers
                 return Json(new { status = false, mess = "Thất bại" });
             }
         }
+        public JsonResult GetPatientFaculty()
+        {
+            var user = CookiesManage.GetUser();
+            List<PatientRecord> records = new List<PatientRecord>();
+            List<Faculty> faculties = new List<Faculty>();
+            using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
+            {
+                records = workScope.PatientRecords.GetAll().Where(x => x.PatientId == user.Id).ToList();
+                foreach (var record in records)
+                {
+                    DetailRecord detail = workScope.DetailRecords.Get(record.Id);
+
+                    Faculty temp = workScope.Faculties.Get(detail.FacultyId);
+
+                    faculties.Add(temp);
+                }
+            }
+
+            return Json(new { status = true, faculties = faculties.Select(f => new { f.Id, f.Name }) }, JsonRequestBehavior.AllowGet);
+
+        }
+
     }
 }
