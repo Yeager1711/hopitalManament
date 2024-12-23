@@ -92,6 +92,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core.Entity\ISymptomRepository.cs" />
     <Compile Include="Core.Entity\IUnitOfWork.cs" />
     <Compile Include="Core.Entity\Repositories\ISymptonsRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IAccountRepository.cs" />
@@ -117,6 +118,7 @@
     <Compile Include="Core.Entity\Repositories\IRoomRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IDetailsFacultySymptonsRepository.cs" />
     <Compile Include="Core.Entity\Repositories\IUserVerificationRepository.cs" />
+    <Compile Include="Core.Entity\SymptomRepository.cs" />
     <Compile Include="Core.Entity\UnitOfWork.cs" />
     <Compile Include="Core.Utils\MailUtils.cs" />
     <Compile Include="Core.Utils\CodeUtils.cs" />

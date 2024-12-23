@@ -3,6 +3,7 @@
 namespace BELibrary.DbContext
 {
     using BELibrary.Entity;
+    using System;
     using System.Data.Entity;
 
     public partial class HospitalManagementDbContext : DbContext
@@ -35,15 +36,26 @@ namespace BELibrary.DbContext
                 { "Khoa Nội Thần kinh tổng quát", new List<string> { "Đau đầu, mất ngủ.", "Chóng mặt, mất trí nhớ.", "Tê bì tay chân, co giật." } },
                
             };
+<<<<<<< HEAD
+=======
+
+        }
+
+        public List<string> GetSymptons()
+        {
+            var mapSymptons = new List<string>();
+>>>>>>> nam
             mapSymptons.AddRange(new[] { "Đau, sưng, biến dạng xương khớp.", "Gãy xương, trật khớp, bong gân.", "Giảm hoặc mất khả năng vận động chi." });
             mapSymptons.AddRange(new[] { "Đau đầu dữ dội, buồn nôn, nôn.", "Tê liệt tay chân, mất cảm giác.", "Co giật, mất ý thức đột ngột." });
             mapSymptons.AddRange(new[] { "Sốt cao, rét run.", "Phát ban, đau cơ, mệt mỏi.", "Tiêu chảy, nôn mửa, vàng da." });
             mapSymptons.AddRange(new[] { "Khám chẩn đoán bệnh lý qua mẫu mô.", "Kết quả xét nghiệm tế bào và mô để phát hiện ung thư hoặc bệnh lý bất thường." });
             mapSymptons.AddRange(new[] { "Đau đầu, mất ngủ.", "Chóng mặt, mất trí nhớ.", "Tê bì tay chân, co giật." });
             mapSymptons.AddRange(new[] { "Đau bụng kéo dài, ợ nóng, khó tiêu.", "Nôn ra máu, đi ngoài phân đen.", "Khó nuốt hoặc đau họng kéo dài." });
+<<<<<<< HEAD
+=======
+            return mapSymptons;
+>>>>>>> nam
         }
-
-
 
         public virtual DbSet<Account> Accounts { get; set; }
 
@@ -122,5 +134,9 @@ namespace BELibrary.DbContext
                 .WillCascadeOnDelete(false);
         }
 
+        public dynamic GetSymptoms()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,10 +1,10 @@
 ﻿@{
     Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
-    Dictionary<int, List<string>> lstSymptoms = new Dictionary<int, List<string>>();
+    List<string> lstSymptons = new List<string>();
     // Truyền data ra ngoài layout
     List<BELibrary.Entity.Room> rooms = new List<BELibrary.Entity.Room>();
 
-    using (var workScope = new BELibrary.Core.Entity.UnitOfWork(new BELibrary.DbContext.HospitalManagementDbContext(lstSymtompsFaculty, lstSymptoms)))
+    using (var workScope = new BELibrary.Core.Entity.UnitOfWork(new BELibrary.DbContext.HospitalManagementDbContext(lstSymtompsFaculty, lstSymptons)))
     {
         rooms = workScope.Rooms.GetAll()
             .ToList();
@@ -12,8 +12,9 @@
 
     ViewBag.GlobalRooms = new SelectList(rooms, "Id", "Description");
 
-    ViewBag.LstSymptoms = new SelectList(lstSymtompsFaculty);
+    ViewBag.LstSymptoms = lstSymtompsFaculty;
 }
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -41,6 +42,7 @@
                 <script src="~/Content/theme/js/respond.min.js"></script>
     <![endif]-->
 
+
     <style>
 
         .Scroll-up {
@@ -59,6 +61,7 @@
             border: 2px solid #03a9f4;
             display: none;
         }
+
         select#medical-description {
             width: 100%;
             padding: .8rem;
@@ -68,11 +71,10 @@
             display: flex;
         }
 
-        .amount label{
-           margin: auto;
-           font-size: 5rem;
-
-        }
+            .amount label {
+                margin: auto;
+                font-size: 5rem;
+            }
 
         .checkbox__re-examination {
             display: flex;
@@ -82,10 +84,9 @@
             border: .1rem solid #dbdbdb;
         }
 
-        .checkbox__re-examination input:hover{
-           cursor: pointer
-        }
-
+            .checkbox__re-examination input:hover {
+                cursor: pointer
+            }
     </style>
 </head>
 <body>
@@ -170,27 +171,26 @@
                         </div>
 
                         <div class="form-group amount">
-
                             <label class="col-form-label next-number" id="nextNumberLabel"></label>
                         </div>
 
 
                         <div class="form-group">
                             <label for="medical-description" class="form-label">Triệu chứng bệnh:</label>
-                            <select class="form-select" id="medical-description" aria-label="Mô tả bệnh án">
-                                @foreach (var symptom in ViewBag.LstSymptoms)
-                                {
-                                    <optgroup label="@symptom.Key">
-                                        @foreach (var symptomName in symptom.Value)
-                                        {
-                                            <option value="@symptomName">@symptomName</option>
-                                        }
-                                    </optgroup>
-                                }
+                            <select class="form-select" id="symptomsDropdown" name="symptoms" aria-label="Mô tả bệnh án" style=" padding: .8rem 1rem; width: 100%;">
+                                <option value="">Chọn triệu chứng</option>
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label>Khoa phụ trách:</label>
+                            <div id="selectedFaculty" class="form-control" readonly style="background-color: #f9f9f9;"></div>
+                        </div>
 
+                        <div class="form-group">
+                            <label>Phòng khám:</label>
+                            <div id="availableRooms" class="form-control" readonly style="background-color: #f9f9f9;"></div>
+                        </div>
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -305,15 +305,21 @@
         }
 
 
+        // Populate faculty dropdown
+        var facultyDropdown = $('#facultyDropdown');
+        faculties.forEach(function (faculty) {
+            facultyDropdown.append($('<option>').text(faculty).val(faculty));
+        });
+
         function savePickNumber() {
             $("#savePickNumber").prop('disabled', true);
 
             // Lấy giá trị của checkbox
             var isRevisit = $('#revisitCheckbox').is(':checked');
-
+            var symptoms = $('#symptomsDropdown').val();
             var formData = new FormData(document.getElementById('form-pick-number'));
             formData.append('isRevisit', isRevisit);  // Thêm giá trị checkbox vào formData
-
+            formData.append('symptoms', symptoms);
             ajax.createOrUpdate(`/register/pick`, formData, (response) => {
                 if (response.status) {
                     // Save nextNumber to session storage
@@ -352,7 +358,65 @@
                 $('#nextNumberLabel').text(''); // Display a default message if no number is found
             }
         });
+    </script>
 
+    <script>
+        $(document).ready(function () {
+            // Tất cả triệu chứng được hiển thị
+            var symptomsDropdown = $('#symptomsDropdown');
 
+            // Lấy tất cả triệu chứng từ tất cả các khoa
+            $.ajax({
+                url: '/register/GetAllSymptoms',  // Cần thêm action này trong controller
+                type: 'GET',
+                success: function (response) {
+                    if (response.status) {
+                        symptomsDropdown.empty();
+                        symptomsDropdown.append($('<option>').text('Chọn triệu chứng').val(''));
+
+                        response.symptoms.forEach(function (symptom) {
+                            symptomsDropdown.append($('<option>').text(symptom).val(symptom));
+                        });
+                    }
+                }
+            });
+
+            // Xử lý sự kiện khi chọn triệu chứng
+            symptomsDropdown.change(function () {
+                var selectedSymptom = $(this).val();
+
+                if (selectedSymptom) {
+                    $.ajax({
+                        url: '/register/GetFacultyBySymptom',
+                        type: 'GET',
+                        data: { symptom: selectedSymptom },
+                        success: function (response) {
+                            if (response.status) {
+                                // Hiển thị tên khoa
+                                $('#selectedFaculty').text(response.faculty);
+
+                                // Xử lý hiển thị phòng
+                                var roomsDiv = $('#availableRooms');
+                                if (response.rooms && response.rooms.length > 0) {
+                                    var roomText = "Phòng khám: ";
+                                    response.rooms.forEach(function (room, index) {
+                                        roomText += room.Description;
+                                        if (index < response.rooms.length - 1) {
+                                            roomText += ", ";
+                                        }
+                                    });
+                                    roomsDiv.html(roomText);
+                                } else {
+                                    roomsDiv.html('<span class="text-warning">Hiện chưa có phòng khám cho khoa này</span>');
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    $('#selectedFaculty').text('');
+                    $('#availableRooms').text('');
+                }
+            });
+        });
     </script>
 </body>

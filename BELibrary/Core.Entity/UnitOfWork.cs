@@ -62,6 +62,7 @@ namespace BELibrary.Core.Entity
         //mới IDetailsFacultySymptonsRepository
         //public IDetailsFacultySymptonsRepository DetailsFacultySymptons { get; private set; }
         public object Queues { get; set; }
+        public object Symptoms { get; set; }
 
         public int Complete()
         {
