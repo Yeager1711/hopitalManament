@@ -88,7 +88,11 @@
                 cursor: pointer
             }
 
-       
+
+        .btn-primary.disabled, .btn-primary:disabled {
+            background-color: #80a59c !important;
+            border-color: #88aca2 !important;
+        }
     </style>
 </head>
 <body>
@@ -169,7 +173,7 @@
 
                         <div class="form-group checkbox__re-examination">
                             <label class="col-form-label">Tái khám: </label>
-                            <input type="checkbox" id="revisitCheckbox" />
+                            <input type="checkbox" id="revisitCheckbox" style="width: 1.2rem; height: 2rem" />
                         </div>
 
                         <div class="form-group amount">
@@ -201,6 +205,7 @@
                             <label>Phòng khám:</label>
                             <div id="availableRooms" class="form-control" readonly style="background-color: #f9f9f9;"></div>
                         </div>
+
                     </form>
                 </div>
                 <div class="modal-footer">
@@ -321,24 +326,34 @@
             facultyDropdown.append($('<option>').text(faculty).val(faculty));
         });
 
-        function savePickNumber() {
+        function savePickNumber(roomId) {
             $("#savePickNumber").prop('disabled', true);
 
-            // Lấy giá trị của checkbox
+            // Lấy giá trị của checkbox và các trường khác
             var isRevisit = $('#revisitCheckbox').is(':checked');
             var symptoms = $('#symptomsDropdown').val();
+            var selectedRoom = $('#availableRooms').text();
+
             var formData = new FormData(document.getElementById('form-pick-number'));
-            formData.append('isRevisit', isRevisit);  // Thêm giá trị checkbox vào formData
+            formData.append('isRevisit', isRevisit);
             formData.append('symptoms', symptoms);
+            formData.append('rooms', selectedRoom);  // Gửi tên phòng
+            formData.append('roomId', roomId);  // Gửi roomId
+
+            // Log formData để kiểm tra giá trị
+            console.log('FormData contents:');
+            formData.forEach((value, key) => {
+                console.log(`${key}: ${value}`);
+            });
+
+            // Gửi yêu cầu AJAX
             ajax.createOrUpdate(`/register/pick`, formData, (response) => {
                 if (response.status) {
-                    // Save nextNumber to session storage
                     localStorage.setItem('nextNumber', response.nextNumber);
 
                     Lobibox.alert("success", {
                         msg: response.mess,
                         callback: function () {
-                            // Cập nhật số mới sau khi bốc
                             $('.next-number').html(response.nextNumber);
                             $('#pickNumber').modal('hide');
                         }
@@ -351,12 +366,11 @@
 
                 $("#savePickNumber").prop('disabled', false);
             }, (jqXhr, textStatus) => {
-                Lobibox.alert("error", {
-                    msg: "Có lỗi xảy ra. Vui lòng thử lại sau."
-                });
+                
                 $("#savePickNumber").prop('disabled', false);
             });
         }
+
 
 
         // When the page loads, set the next number from sessionStorage to the label
@@ -407,18 +421,29 @@
 
                                 // Xử lý hiển thị phòng
                                 var roomsDiv = $('#availableRooms');
+                                var roomText = "";
+                                var roomId = null; // Biến để lưu roomId
+
                                 if (response.rooms && response.rooms.length > 0) {
-                                    var roomText = "Phòng khám: ";
                                     response.rooms.forEach(function (room, index) {
                                         roomText += room.Description;
                                         if (index < response.rooms.length - 1) {
                                             roomText += ", ";
+                                        }
+                                        // Lấy roomId từ phòng đầu tiên (hoặc theo logic của bạn)
+                                        if (index === 0) {
+                                            roomId = room.Id;
                                         }
                                     });
                                     roomsDiv.html(roomText);
                                 } else {
                                     roomsDiv.html('<span class="text-warning">Hiện chưa có phòng khám cho khoa này</span>');
                                 }
+
+                                // Lưu roomId vào FormData để gửi cùng dữ liệu khi bốc số
+                                $('#savePickNumber').on('click', function () {
+                                    savePickNumber(roomId); // Gọi hàm savePickNumber với roomId
+                                });
                             }
                         }
                     });
@@ -427,31 +452,41 @@
                     $('#availableRooms').text('');
                 }
             });
+
         });
     </script>
 
     <script>
         $(document).ready(function () {
-        // Bắt sự kiện thay đổi của checkbox
+            // Bắt sự kiện thay đổi của checkbox
             $('#revisitCheckbox').on('change', function () {
-                // Kiểm tra nếu checkbox được check
                 if ($(this).is(':checked')) {
-                    // Disable dropdown
-                    $('#symptomsDropdown').prop('disabled', true);
+                    // Disable dropdown và làm sạch giá trị
+                    $('#symptomsDropdown').prop('disabled', true).val('');
+                    // Làm sạch và hiển thị phần Khoa phụ trách
+                    $('#selectedFaculty').text('');
+                    $('#availableRooms').text('');
                     $('.examination').css('display', 'block');
                 } else {
                     // Enable dropdown
                     $('#symptomsDropdown').prop('disabled', false);
+                    $('#symptomsDropdown').val('');
+                    // Ẩn phần Khoa phụ trách
+                    $('#selectedFaculty').text('');
+                    $('#availableRooms').text('');
                     $('.examination').css('display', 'none');
                 }
             });
         });
     </script>
 
+
     <script>
         $(document).ready(function () {
             var PatientFacultyDropdown = $('#PatientFacultyDropdown');
+            var availableRoomsDiv = $('#availableRooms'); // Element to display the room
 
+            // Fetch faculties and populate dropdown
             $.ajax({
                 url: '/register/GetPatientFaculty',
                 type: 'GET',
@@ -479,19 +514,76 @@
                 }
             });
 
-            // Attach change event to log doctor info
+            // Attach change event to the dropdown
             PatientFacultyDropdown.on('change', function () {
                 var selectedOption = $(this).find(':selected');
                 var doctorData = selectedOption.data('doctor');
 
                 if (doctorData) {
                     console.log('Selected Faculty Doctor:', doctorData);
+
+                    // Call GetRoomByDoctor API to fetch room based on doctor ID
+                    $.ajax({
+                        url: '/register/GetRoomByDoctor',
+                        type: 'GET',
+                        data: { doctorId: doctorData.id },
+                        success: function (response) {
+                            if (response.status) {
+                                var room = response.roomPatient;
+
+                                // Check if room exists and display it
+                                if (room) {
+                                    console.log("roomId: ", room.Id);
+                                    availableRoomsDiv.text(room.Description + ' ' + '|' + ' ' + "Bác sĩ: " + doctorData.name || 'Phòng không có tên');
+
+                                    // Lưu roomId vào FormData khi bốc số
+                                    $('#savePickNumber').on('click', function () {
+                                        savePickNumber(room.Id); // Gọi hàm savePickNumber với roomId
+                                    });
+                                } else {
+                                    availableRoomsDiv.text('Không có phòng tương ứng.');
+                                }
+                            } else {
+                                console.error('Không tìm thấy phòng cho bác sĩ này.');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Lỗi khi gọi API GetRoomByDoctor:', error);
+                        }
+                    });
                 } else {
-                    console.log('No doctor information available for the selected faculty.');
+                    availableRoomsDiv.text('Chọn khoa tái khám để xem phòng.');
                 }
             });
+
         });
 
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            function toggleSaveButton() {
+                const isSymptomsSelected = $('#symptomsDropdown').val() !== null && $('#symptomsDropdown').val() !== '';
+                const isRevisitChecked = $('#revisitCheckbox').is(':checked');
+                const isPatientFacultySelected = $('#PatientFacultyDropdown').val() !== null && $('#PatientFacultyDropdown').val() !== '';
+
+                // Điều kiện để vô hiệu hóa nút
+                if (isRevisitChecked && isPatientFacultySelected) {
+                    $('#savePickNumber').prop('disabled', false); 
+                } else if (isSymptomsSelected) {
+                    $('#savePickNumber').prop('disabled', false); 
+                } else {
+                    $('#savePickNumber').prop('disabled', true); 
+                }
+            }
+
+            // Gán sự kiện thay đổi cho các phần tử liên quan
+            $('#symptomsDropdown, #revisitCheckbox, #PatientFacultyDropdown').on('change', toggleSaveButton);
+
+            // Kiểm tra trạng thái ban đầu khi tải trang
+            $('#savePickNumber').prop('disabled', true); // Disable mặc định
+            toggleSaveButton(); // Gọi để cập nhật chính xác
+        });
     </script>
 
 </body>

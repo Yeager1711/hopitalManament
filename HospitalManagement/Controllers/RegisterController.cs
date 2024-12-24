@@ -17,7 +17,7 @@ namespace HospitalManagement.Controllers
         // GET: Register
         [HttpPost, ValidateInput(false)]
 
-        public JsonResult pick(DateTime startTime, bool isRevisit, string symptoms)
+        public JsonResult pick(DateTime startTime, bool isRevisit, string symptoms, int roomId, string rooms)
         {
             var user = CookiesManage.GetUser();
 
@@ -57,7 +57,6 @@ namespace HospitalManagement.Controllers
                 });
             }
 
-
             Dictionary<string, List<string>> lstSymtompsFaculty = new Dictionary<string, List<string>>();
             List<string> lstSymptoms = new List<string>();
 
@@ -75,27 +74,15 @@ namespace HospitalManagement.Controllers
                 }
                 Faculty requestFaculty = workScope.Faculties.GetAll().Where(x => x.Name == faculty).FirstOrDefault();
 
-
-
-                // Room 
-                Room room = null;
+                // Validate Room ID
+                Room room = workScope.Rooms.GetAll().FirstOrDefault(r => r.Id == roomId);
+                if (room == null)
+                {
+                    return Json(new { status = false, mess = "Phòng khám không hợp lệ !" });
+                }
 
                 // Giới hạn tối đa số lượt khám cho mỗi phòng
                 const int maxCapacityPerRoom = 10;
-
-                // Lấy danh sách tất cả các phòng
-                var roomsInFaculties = workScope.Rooms.GetAll().ToList();
-
-                var roomsWithFacultyName = workScope.Rooms
-
-                    .Include(r => r.Faculty)
-                    .Select(r => new
-                    {
-                        RoomId = r.Id,
-                        RoomDescription = r.Description,
-                        FacultyName = r.Faculty.Name
-                    })
-                    .ToList();
 
                 // Lấy danh sách bệnh nhân đã đăng ký trong ngày
                 var patientRegisterAtDate = workScope.PatientRegisters
@@ -105,32 +92,22 @@ namespace HospitalManagement.Controllers
                         && x.StartTime.Value.Day == startTime.Day)
                     .ToList();
 
-                // Kiểm tra từng phòng
-                foreach (var r in roomsInFaculties)
+                // Kiểm tra số lượng bệnh nhân trong phòng
+                if (patientRegisterAtDate.Where(x => x.RoomId == room.Id).Count() >= maxCapacityPerRoom)
                 {
-                    if (patientRegisterAtDate.Where(x => x.RoomId == r.Id).Count() < maxCapacityPerRoom)
-                    {
-                        room = r;
-
-                        if (patientRegisterAtDate.Where(x => x.RoomId == r.Id).Any())
-                        {
-                            requestNumber = patientRegisterAtDate
-                                .Where(x => x.RoomId == r.Id)
-                                .Max(x => x.Number) + 1;
-                        }
-                        else
-                        {
-                            // Nếu chưa có bệnh nhân nào đăng ký thì số thứ tự là 1
-                            requestNumber = 1;
-                        }
-
-                        break;
-                    }
+                    return Json(new { status = false, mess = "Phòng khám đã hết số lượng bệnh nhân trong ngày !" });
                 }
 
-                if (requestNumber == -1)
+                if (patientRegisterAtDate.Where(x => x.RoomId == room.Id).Any())
                 {
-                    return Json(new { status = false, mess = "Hết số lượng số đăng ký ở các phòng khám trong ngày ! Vui lòng đặt vào ngày khác !" });
+                    requestNumber = patientRegisterAtDate
+                        .Where(x => x.RoomId == room.Id)
+                        .Max(x => x.Number) + 1;
+                }
+                else
+                {
+                    // Nếu chưa có bệnh nhân nào đăng ký thì số thứ tự là 1
+                    requestNumber = 1;
                 }
 
                 var register = new PatientRegister
@@ -145,14 +122,15 @@ namespace HospitalManagement.Controllers
                 workScope.PatientRegisters.Add(register);
                 workScope.Complete();
 
-                string message = string.Format("Bạn đã lấy được số thứ tự <b>{0}</b>, khám tại phòng <b>{1}</b>, thời gian {2}",
+                string message = string.Format("Bạn đã lấy được số thứ tự <b>{0}</b> <br/> Khám tại phòng <b>{1}</b> ( <b>{2}</b> ) <br/> Thời gian: {3}",
                     register.Number,
-                    room.Description,
+                    room.Description,  // Using room's description for the message
+                    rooms,
                     register.StartTime.Value.ToString("dd/MM/yyyy HH:mm"));
 
-                if (isRevisit)  
+                if (isRevisit)
                 {
-                    message += ", Hình thức: Tái khám";
+                    message += ",<br/> Hình thức: Tái khám.";
                 }
 
                 return Json(new
@@ -163,6 +141,7 @@ namespace HospitalManagement.Controllers
                 });
             }
         }
+
 
         private static readonly Dictionary<string, List<string>> mapSymptompsFaculty = new Dictionary<string, List<string>>
         {
@@ -300,6 +279,16 @@ namespace HospitalManagement.Controllers
             }
 
             return Json(new { status = true, faculties = faculties }, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult GetRoomByDoctor(Guid doctorId)
+        {
+            var room = new object();
+            using (var workScope = new UnitOfWork(new HospitalManagementDbContext()))
+            {
+                room = workScope.Rooms.GetAll().FirstOrDefault(x => x.DoctorId == doctorId);
+            }
+            return Json(new { status = true, roomPatient = room }, JsonRequestBehavior.AllowGet);
         }
 
     }
